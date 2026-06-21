@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>QG do Papai - Seleção de Perfil</title>
   
   <!-- Estilos Mãe separados de Brawl Stars -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2.0">
   
   <!-- CSS Auxiliar Tailwind (CDN) para facilitar flexibilidade de layout responsivo rápido -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -33,19 +36,9 @@
   <header class="py-6 px-4 bg-black/60 border-b-4 border-black z-10">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       
-      <div class="flex items-center gap-4">
-        <!-- Ícone Estrela de Elite -->
-        <div class="w-14 h-14 bg-yellow-400 border-4 border-black rounded-xl flex items-center justify-center shadow-[3px_3px_0_#000] rotate-[-4deg]">
-          <span class="text-3xl text-black">👑</span>
-        </div>
-        <div>
-          <h1 class="text-3xl font-brawl tracking-wider text-yellow-400 uppercase drop-shadow-[0_4px_0_#000] brawl-text-stroke">
-            QG Do Papai
-          </h1>
-          <p class="text-xs text-white/70 font-sansAlt font-semibold">
-            Central de Comando Familiar • Brawl Stars Estilo
-          </p>
-        </div>
+      <div class="flex items-center">
+        <!-- Logo Horizontal QG do Papai -->
+        <img src="imagens/ui/logo_hori.png" alt="QG do Papai" class="h-16 md:h-20 max-w-[280px] object-contain select-none pointer-events-none filter drop-shadow-[0_2px_0_#000]" onerror="this.src='https://placehold.co/280x64/1e052c/ffffff?text=QG+DO+PAPAI&font=Lilita+One';">
       </div>
 
       <!-- Placa de Atividades -->
@@ -215,7 +208,7 @@
 
   <!-- MONITOR DE STATUS NO PLACAR -->
   <footer class="bg-slate-900 border-t-4 border-black p-6">
-    <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
+    <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 mb-6">
       
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 bg-yellow-400 border-4 border-black rounded-lg flex items-center justify-center font-bold text-2xl rotate-[-2deg] shadow-[2px_2px_0_#000]">
@@ -267,6 +260,14 @@
       </div>
 
     </div>
+
+    <!-- Rodapé Logo Vertical e Versão -->
+    <div class="border-t-2 border-slate-800/65 pt-6 flex flex-col items-center justify-center gap-3">
+      <img src="imagens/ui/logo_vert.png" alt="QG do Papai" class="max-h-24 object-contain mx-auto select-none pointer-events-none" onerror="this.src='https://placehold.co/120x120/1e052c/ffffff?text=QG+DO+PAPAI&font=Lilita+One';">
+      <div class="text-xs text-white/40 font-sansAlt font-semibold tracking-wider text-center">
+        ⚡ QG DO PAPAI • Brawl Stars Theme © 2026 • Versão: 2.0
+      </div>
+    </div>
   </footer>
 
   <!-- SISTEMA DE COMPORTAMENTO EM JAVASCRIPT -->
@@ -292,34 +293,8 @@
 
     function selectProfile(profileId) {
       playClick();
-      if (profileId === 'papai' || profileId === 'convidado') {
-        startLoginSimulation(profileId + '.html');
-      } else {
-        // Exige digitação de senha
-        activeTarget = profileId;
-        typedPin = '';
-        document.getElementById('pin-display').value = '';
-        
-        // Customiza modal de acordo com quem o usuário clicou
-        const pinTitle = document.getElementById('pin-title');
-        const pinAvatar = document.getElementById('pin-avatar-area');
-        const pinError = document.getElementById('pin-error-text');
-        
-        pinError.innerText = "Insira os 6 dígitos";
-        pinError.className = "text-[10px] text-slate-500 font-mono mt-1";
-        
-        if (profileId === 'miguel') {
-          pinTitle.innerText = "Entrada do Miguel";
-          pinAvatar.innerText = "🦈";
-          pinAvatar.className = "w-16 h-16 bg-blue-900 rounded-2xl mx-auto flex items-center justify-center border-4 border-black text-3xl";
-        } else {
-          pinTitle.innerText = "Entrada da Sophia";
-          pinAvatar.innerText = "🌸";
-          pinAvatar.className = "w-16 h-16 bg-pink-900 rounded-2xl mx-auto flex items-center justify-center border-4 border-black text-3xl";
-        }
-        
-        document.getElementById('pin-modal').classList.remove('hidden');
-      }
+      // Desativação Temporária de Senhas para acesso ágil durante o desenvolvimento
+      startLoginSimulation(profileId + '.html');
     }
 
     function closePinModal() {

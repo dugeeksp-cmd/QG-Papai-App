@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>QG do Papai - Painel Sophia</title>
   
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="sophia.css">
+  <link rel="stylesheet" href="style.css?v=2.0">
+  <link rel="stylesheet" href="sophia.css?v=2.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -297,7 +300,7 @@
   </div>
 
   <footer class="mt-8 py-3 text-center text-xs text-white/35">
-    ⚡ QG DO PAPAI • Brawl Stars Theme © 2026
+    ⚡ QG DO PAPAI • Brawl Stars Theme © 2026 • Versão: 2.0
   </footer>
 
   <!-- CONTROLE EM JAVASCRIPT - SOPHIA BOARD -->
@@ -344,8 +347,11 @@
       msgSound.play().catch(e => console.log('blocked', e));
     }
 
-    // Inicialização da Tela
+     // Inicialização da Tela
     window.addEventListener('load', () => {
+      // Desativação Temporária de Senhas para agilizar o desenvolvimento familial
+      localStorage.setItem('qg_logged_in_sophia', 'true');
+
       // 1. Verificar Estado do Bloqueio familiar
       const alreadyLoggedIn = localStorage.getItem('qg_logged_in_sophia') === 'true';
       if (!alreadyLoggedIn) {
@@ -396,27 +402,15 @@
 
     function confirmLockPin() {
       const errorText = document.getElementById('lock-error-text');
-      if (typedPin === correctPin) {
-        // Sucesso! Toca o som de load e entra
-        unlockSound.currentTime = 0;
-        unlockSound.play().catch(e => console.log(e));
-        
-        localStorage.setItem('qg_logged_in_sophia', 'true');
-        
-        document.getElementById('lockscreen').classList.add('hidden');
-        document.getElementById('main-content').classList.remove('hidden');
-        initializeBoard();
-      } else {
-        // Erro
-        errorSound.currentTime = 0;
-        errorSound.play().catch(e => console.log(e));
-        
-        typedPin = '';
-        updatePinSlots();
-        
-        errorText.innerText = "PIN INCORRETO! TENTE DE NOVO (Hint: 654321)";
-        errorText.className = "text-center text-[11px] text-red-500 font-bold font-brawl bg-black/40 py-1.5 rounded-lg border border-red-500 animate-bounce mb-4";
-      }
+      // Desativação Temporária de Senha: Aceita qualquer digitação e desbloqueia!
+      unlockSound.currentTime = 0;
+      unlockSound.play().catch(e => console.log(e));
+      
+      localStorage.setItem('qg_logged_in_sophia', 'true');
+      
+      document.getElementById('lockscreen').classList.add('hidden');
+      document.getElementById('main-content').classList.remove('hidden');
+      initializeBoard();
     }
 
     // Inicialização da customização e chat
