@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QG do Papai - Painel Convidado</title>
+  
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            brawl: ['"Lilita One"', 'cursive', 'sans-serif'],
+            sansAlt: ['"Outfit"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="brawl-stripe-bg p-4 flex flex-col justify-between min-h-screen">
+
+  <audio id="audio-click" src="sons/menu_click_01.ogg" preload="auto"></audio>
+  <audio id="audio-msg" src="sons/new_msg.ogg" preload="auto"></audio>
+
+  <div class="max-w-6xl w-full mx-auto flex flex-col gap-6">
+
+    <!-- Topo -->
+    <div class="flex justify-between items-center bg-black/60 p-4 border-2 border-black rounded-2xl">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">👾</span>
+        <span class="font-brawl text-2xl tracking-wide uppercase text-emerald-400 text-shadow">Sala do Convidado</span>
+      </div>
+      <a href="index.html" onclick="playClick()" class="brawl-btn-red text-xs px-4 py-2 font-brawl uppercase">
+        Sair do QG 🚪
+      </a>
+    </div>
+
+    <!-- Interface Adaptada: Tema Convidado (Cinza-Verde) -->
+    <main class="theme-papai bg-gradient-to-b from-[#1c2e24] to-[#0c1611] border-4 border-emerald-500 rounded-3xl p-6 shadow-[0_10px_0_rgba(0,0,0,0.5)]">
+      
+      <!-- Infos do Personagem -->
+      <section class="bg-black/40 border-4 border-black rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="text-4xl bg-emerald-950/50 p-3 rounded-xl border border-emerald-500/20">👾</span>
+          <div>
+            <h3 class="text-2xl font-brawl text-emerald-300 uppercase tracking-wide">Aliado Convidado</h3>
+            <span class="bg-emerald-600 text-white border-2 border-black font-brawl uppercase text-[9px] px-2.5 py-0.5 rounded-full inline-block">
+              🎮 Conexão Temporária
+            </span>
+          </div>
+        </div>
+
+        <div class="bg-black/60 border-2 border-black rounded-xl px-4 py-1.5 flex items-center gap-1.5 text-xs text-yellow-300 font-brawl">
+          🏆 1,200 Troféus
+        </div>
+      </section>
+
+      <!-- Painel de Chat Integrado -->
+      <section class="mt-6">
+        
+        <!-- Abas do Chat -->
+        <div class="brawl-tab-container select-none">
+          <button id="tab-Familia" onclick="switchTab('Familia')" class="brawl-tab active-familia">👪 Família</button>
+        </div>
+
+        <!-- Chat Box -->
+        <div class="brawl-chat-box">
+          <div class="bg-black/30 px-3 py-1.5 rounded-xl text-xs text-emerald-300 font-mono">
+            Canal Ativo: 🌍 FAMÍLIA (Todas as frentes integradas)
+          </div>
+
+          <!-- Feed de Mensagens -->
+          <div class="chat-message-list" id="chat-feed">
+            <!-- Mensagens injetadas via JS -->
+          </div>
+
+          <!-- Input e Envio com áudio -->
+          <div class="flex gap-3 border-t-2 border-black pt-4">
+            <input type="text" id="chat-input" placeholder="Escreva no canal de família como convidado..." class="flex-grow bg-slate-900 border-2 border-black rounded-xl p-3 text-white text-sm focus:outline-none focus:border-emerald-400 font-semibold" onkeydown="handleKeyDown(event)">
+            
+            <button onclick="sendMessage()" class="brawl-btn-green font-brawl text-xs uppercase px-6 py-3 whitespace-nowrap">
+              Mandar 🚀
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <footer class="mt-8 py-4 text-center text-xs text-white/40">
+    ⚡ QG DO PAPAI • Brawl Stars Theme © 2026
+  </footer>
+
+  <script>
+    const clickSound = document.getElementById('audio-click');
+    const msgSound = document.getElementById('audio-msg');
+
+    let currentChannel = 'Familia'; 
+
+    function playClick() {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(err => console.log('Click play blocked:', err));
+    }
+
+    function playMsg() {
+      msgSound.currentTime = 0;
+      msgSound.play().catch(err => console.log('Msg play blocked:', err));
+    }
+
+    window.addEventListener('load', () => {
+      loadChat();
+    });
+
+    function getChatKey() {
+      return 'qg_papai_chat_messages_' + currentChannel;
+    }
+
+    function loadChat() {
+      const feed = document.getElementById('chat-feed');
+      feed.innerHTML = '';
+
+      const key = getChatKey();
+      const savedMessages = JSON.parse(localStorage.getItem(key)) || getDefaultMessages();
+
+      savedMessages.forEach(msg => {
+        appendMessageUI(msg);
+      });
+      scrollToBottom();
+    }
+
+    function scrollToBottom() {
+      const feed = document.getElementById('chat-feed');
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function getDefaultMessages() {
+      return [
+        {
+          id: 1,
+          sender: "Papai (Admin)",
+          senderRole: "👑 ADMIN",
+          avatarFile: "imagens/perfil/bull_portrait.png",
+          text: "Sejam bem-vindos ao clã oficial familiar! 🚀 Todas as missões do dia estão de pé!",
+          timestamp: "12:00",
+          isPin: false
+        },
+        {
+          id: 2,
+          sender: "Miguel",
+          senderRole: "⚡ JOGADOR",
+          avatarFile: "imagens/perfil/fang_portrait.png",
+          text: "Estou jogando e terminando de organizar a estante, pai! 🦈",
+          timestamp: "12:01",
+          isPin: false
+        }
+      ];
+    }
+
+    function appendMessageUI(msg) {
+      const feed = document.getElementById('chat-feed');
+      const bubble = document.createElement('div');
+      
+      const isMe = msg.sender.includes("Convidado") || msg.sender.includes("Você");
+      bubble.className = "msg-bubble " + (isMe ? "sent-by-user" : "received");
+
+      const headerColorClass = isMe ? "text-slate-800" : (msg.sender.includes("Papai") ? "text-yellow-400" : "text-blue-400");
+
+      let bodyHtml = `<p class="text-[10px] ${headerColorClass} font-brawl mb-1 uppercase flex justify-between gap-4">
+        <span>${msg.sender} <span class="text-[8px] opacity-75 font-mono">(${msg.senderRole})</span></span>
+        <span class="font-mono font-normal opacity-60">${msg.timestamp}</span>
+      </p>`;
+
+      if (msg.isPin) {
+        bodyHtml += `<img src="${msg.text}" class="w-14 h-14 object-contain my-1 animate-bounce">`;
+      } else {
+        bodyHtml += `<span>${msg.text}</span>`;
+      }
+
+      bubble.innerHTML = bodyHtml;
+      feed.appendChild(bubble);
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Enter' || event.keyCode === 13) {
+        sendMessage();
+      }
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      playClick();
+
+      const now = new Date();
+      const timestampStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+      const newMsg = {
+        id: Date.now(),
+        sender: "Convidado (Visitante)",
+        senderRole: "👾 GUEST",
+        avatarFile: "",
+        text: text,
+        timestamp: timestampStr,
+        isPin: false
+      };
+
+      saveMessageToLocal(newMsg);
+      appendMessageUI(newMsg);
+      scrollToBottom();
+
+      input.value = '';
+      input.focus();
+      playMsg();
+
+      // Auto-response
+      simulateResponse();
+    }
+
+    function saveMessageToLocal(msg) {
+      const key = getChatKey();
+      const msgs = JSON.parse(localStorage.getItem(key)) || getDefaultMessages();
+      msgs.push(msg);
+      localStorage.setItem(key, JSON.stringify(msgs));
+    }
+
+    function simulateResponse() {
+      setTimeout(() => {
+        const now = new Date();
+        const timestampStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+        const incomingMsg = {
+          id: Date.now(),
+          sender: "Papai (Admin)",
+          senderRole: "👑 ADMIN",
+          avatarFile: "imagens/perfil/bull_portrait.png",
+          text: "Seja bem-vindo ao clã como aliado no QG! 👾🎮 Divirta-se jogando!",
+          timestamp: timestampStr,
+          isPin: false
+        };
+
+        saveMessageToLocal(incomingMsg);
+        appendMessageUI(incomingMsg);
+        scrollToBottom();
+        playMsg();
+      }, 3000);
+    }
+  </script>
+
+</body>
+</html>

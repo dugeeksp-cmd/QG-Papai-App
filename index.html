@@ -1,13 +1,391 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QG do Papai - Seleção de Perfil</title>
+  
+  <!-- Estilos Mãe separados de Brawl Stars -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- CSS Auxiliar Tailwind (CDN) para facilitar flexibilidade de layout responsivo rápido -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            brawl: ['"Lilita One"', 'cursive', 'sans-serif'],
+            sansAlt: ['"Outfit"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="brawl-stripe-bg min-h-screen flex flex-col justify-between">
 
+  <!-- Efeitos Sonoros Reais sem barra inicial -->
+  <audio id="audio-click" src="sons/menu_click_01.ogg" preload="auto"></audio>
+  <audio id="audio-login" src="sons/load_login.ogg" preload="auto"></audio>
+
+  <!-- TOPO: Cabeçalho com espaço planejado e reservado para logo-qg.png -->
+  <header class="py-6 px-4 bg-black/60 border-b-4 border-black z-10">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <div class="flex items-center gap-4">
+        <!-- Ícone Estrela de Elite -->
+        <div class="w-14 h-14 bg-yellow-400 border-4 border-black rounded-xl flex items-center justify-center shadow-[3px_3px_0_#000] rotate-[-4deg]">
+          <span class="text-3xl text-black">👑</span>
+        </div>
+        <div>
+          <h1 class="text-3xl font-brawl tracking-wider text-yellow-400 uppercase drop-shadow-[0_4px_0_#000] brawl-text-stroke">
+            QG Do Papai
+          </h1>
+          <p class="text-xs text-white/70 font-sansAlt font-semibold">
+            Central de Comando Familiar • Brawl Stars Estilo
+          </p>
+        </div>
+      </div>
+
+      <!-- Placa de Atividades -->
+      <div class="bg-amber-500 text-black px-4 py-1.5 rounded-full border-4 border-black font-brawl uppercase text-sm shadow-[2px_2px_0_#000] tracking-wide">
+        Lobby Principal Do Clã 👑
+      </div>
+
+    </div>
+  </header>
+
+  <!-- CENTRO: Seleção de Brawlers / Perfis (4 grandes Cards no estilo Brawl Stars) -->
+  <main class="max-w-6xl w-full mx-auto px-4 py-10 flex-grow flex flex-col justify-center gap-8">
+    
+    <div class="text-center">
+      <span class="bg-black/80 text-[#FFE800] uppercase font-brawl text-xs px-4 py-1.5 border-2 border-black rounded-full tracking-widest inline-block shadow-[1px_1px_0_#000]">
+        Selecione o Brawler Requerido
+      </span>
+      <h2 class="text-4xl md:text-5xl font-brawl tracking-tight uppercase text-white mt-3 drop-shadow-[0_4px_0_#000] brawl-text-stroke">
+        Quem Está Operando o QG Hoje?
+      </h2>
+    </div>
+
+    <!-- Grid dos Perfis -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- Card 1: PAPAI -->
+      <div onclick="selectProfile('papai')" class="group brawl-card bg-gradient-to-b from-amber-600 via-yellow-500 to-amber-700 p-1 text-center min-h-[320px] flex flex-col justify-between cursor-pointer">
+        <div class="p-6">
+          <div class="w-24 h-24 bg-white/15 rounded-full mx-auto flex items-center justify-center border-4 border-white/10 group-hover:scale-105 transition-all shadow-inner overflow-hidden relative">
+            <img src="imagens/perfil/bull_portrait.png" alt="Papai" class="w-full h-full object-cover" onerror="this.style.display='none'">
+            <span class="text-5xl absolute">🔥</span>
+          </div>
+        </div>
+        <div class="bg-black/45 p-4 border-t-2 border-black/30 rounded-b-[16px] flex flex-col gap-1">
+          <span class="font-brawl text-2xl tracking-wide uppercase text-white drop-shadow-[0_2px_0_#000] group-hover:text-yellow-300">
+            PAPAI
+          </span>
+          <span class="text-[10px] bg-red-600/80 border border-black/30 text-white py-0.5 px-2 rounded-full font-brawl tracking-wider uppercase">
+            👑 Dono do QG
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 2: MIGUEL -->
+      <div onclick="selectProfile('miguel')" class="group brawl-card bg-gradient-to-b from-blue-600 via-cyan-500 to-blue-800 p-1 text-center min-h-[320px] flex flex-col justify-between cursor-pointer">
+        <div class="p-6">
+          <div class="w-24 h-24 bg-white/15 rounded-full mx-auto flex items-center justify-center border-4 border-white/10 group-hover:scale-105 transition-all shadow-inner overflow-hidden relative">
+            <img src="imagens/perfil/fang_portrait.png" alt="Miguel" class="w-full h-full object-cover" onerror="this.style.display='none'">
+            <span class="text-5xl absolute">🦈</span>
+          </div>
+        </div>
+        <div class="bg-black/45 p-4 border-t-2 border-black/30 rounded-b-[16px] flex flex-col gap-1">
+          <span class="font-brawl text-2xl tracking-wide uppercase text-white drop-shadow-[0_2px_0_#000] group-hover:text-yellow-300">
+            MIGUEL
+          </span>
+          <span class="text-[10px] bg-blue-600/80 border border-black/30 text-white py-0.5 px-2 rounded-full font-brawl tracking-wider uppercase">
+            ⚡ Guerreiro Lenda
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 3: SOPHIA -->
+      <div onclick="selectProfile('sophia')" class="group brawl-card bg-gradient-to-b from-pink-600 via-fuchsia-400 to-purple-800 p-1 text-center min-h-[320px] flex flex-col justify-between cursor-pointer">
+        <div class="p-6">
+          <div class="w-24 h-24 bg-white/15 rounded-full mx-auto flex items-center justify-center border-4 border-white/10 group-hover:scale-105 transition-all shadow-inner overflow-hidden relative">
+            <img src="imagens/perfil/penny_portrait.png" alt="Sophia" class="w-full h-full object-cover" onerror="this.style.display='none'">
+            <span class="text-5xl absolute">🌸</span>
+          </div>
+        </div>
+        <div class="bg-black/45 p-4 border-t-2 border-black/30 rounded-b-[16px] flex flex-col gap-1">
+          <span class="font-brawl text-2xl tracking-wide uppercase text-white drop-shadow-[0_2px_0_#000] group-hover:text-yellow-300">
+            SOPHIA
+          </span>
+          <span class="text-[10px] bg-pink-600/80 border border-black/30 text-white py-0.5 px-2 rounded-full font-brawl tracking-wider uppercase">
+            🦄 Princesa Uni
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 4: CONVIDADO -->
+      <div onclick="selectProfile('convidado')" class="group brawl-card bg-gradient-to-b from-slate-600 via-emerald-400 to-slate-800 p-1 text-center min-h-[320px] flex flex-col justify-between cursor-pointer">
+        <div class="p-6">
+          <div class="w-24 h-24 bg-white/15 rounded-full mx-auto flex items-center justify-center border-4 border-white/10 group-hover:scale-105 transition-all shadow-inner overflow-hidden relative">
+            <span class="text-5xl">👾</span>
+          </div>
+        </div>
+        <div class="bg-black/45 p-4 border-t-2 border-black/30 rounded-b-[16px] flex flex-col gap-1">
+          <span class="font-brawl text-2xl tracking-wide uppercase text-white drop-shadow-[0_2px_0_#000] group-hover:text-yellow-300">
+            CONVIDADO
+          </span>
+          <span class="text-[10px] bg-slate-600/80 border border-black/30 text-white py-0.5 px-2 rounded-full font-brawl tracking-wider uppercase">
+            🎮 Aliado Temporário
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL DE DIGITAÇÃO DE SENHA (PIN TECLADO) PARA AS CRIANÇAS -->
+  <div id="pin-modal" class="fixed inset-0 bg-black/85 flex items-center justify-center hidden z-50 p-4">
+    <div class="brawl-card max-w-sm w-full bg-[#1e1e2d] border-4 border-black p-6 relative">
+      <button onclick="closePinModal()" class="absolute -top-3 -right-3 w-8 h-8 bg-red-600 border-4 border-black rounded-full flex items-center justify-center font-bold text-white shadow-[2px_2px_0_#000] hover:bg-red-500 font-brawl">×</button>
+      
+      <div class="text-center mb-4">
+        <div id="pin-avatar-area" class="w-16 h-16 bg-slate-800 rounded-2xl mx-auto flex items-center justify-center border-4 border-black shadow-[3px_3px_0_#000] mb-3 text-3xl">
+          🦈
+        </div>
+        <h3 id="pin-title" class="text-2xl font-brawl text-white uppercase drop-shadow-[0_2px_0_#000]">
+          Entrada Restrita
+        </h3>
+        <p class="text-xs text-slate-300 mt-1">
+          Digite o PIN familiar de 6 dígitos para destravar o seu painel do QG.
+        </p>
+      </div>
+
+      <!-- Display do PIN -->
+      <div id="pin-box" class="w-full py-3.5 bg-black rounded-xl border-4 border-black text-center mb-5">
+        <input type="password" id="pin-display" readonly placeholder="------" class="bg-transparent text-center font-brawl text-2xl text-yellow-300 tracking-[0.5em] w-full focus:outline-none placeholder:text-slate-800">
+        <p id="pin-error-text" class="text-[10px] text-slate-500 font-mono mt-1">Insira os 6 dígitos</p>
+      </div>
+
+      <!-- Teclado Numérico Brawl Stars -->
+      <div class="brawl-pin-grid mb-4">
+        <button onclick="pressNum('1')" class="brawl-pin-btn">1</button>
+        <button onclick="pressNum('2')" class="brawl-pin-btn">2</button>
+        <button onclick="pressNum('3')" class="brawl-pin-btn">3</button>
+        <button onclick="pressNum('4')" class="brawl-pin-btn">4</button>
+        <button onclick="pressNum('5')" class="brawl-pin-btn">5</button>
+        <button onclick="pressNum('6')" class="brawl-pin-btn">6</button>
+        <button onclick="pressNum('7')" class="brawl-pin-btn">7</button>
+        <button onclick="pressNum('8')" class="brawl-pin-btn">8</button>
+        <button onclick="pressNum('9')" class="brawl-pin-btn">9</button>
+        <button onclick="clearPin()" class="brawl-pin-btn bg-red-700 text-xs font-brawl">LIMPAR</button>
+        <button onclick="pressNum('0')" class="brawl-pin-btn">0</button>
+        <button onclick="confirmPin()" class="brawl-pin-btn bg-green-500 font-brawl text-lg">🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA DE CARREGAMENTO OFICIAL DO BRAWL STARS -->
+  <div id="loading-overlay" class="fixed inset-0 bg-[#0c0d14] hidden z-50 flex flex-col justify-between p-8 brawl-stripe-bg">
+    <div class="flex-grow flex flex-col items-center justify-center">
+      <div class="w-24 h-24 bg-yellow-400 rounded-3xl border-8 border-black flex items-center justify-center shadow-[0_10px_0_rgba(0,0,0,0.5)] animate-bounce rotate-[8deg] mb-8">
+        <span class="text-5xl filter drop-shadow-[2px_4px_0_rgba(0,0,0,0.3)]">⭐</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl font-brawl text-yellow-400 uppercase tracking-widest text-center drop-shadow-[0_5px_0_#000] brawl-text-stroke mb-2">
+        CONECTANDO AO QG...
+      </h2>
+      <p class="text-xs text-slate-300 tracking-wider font-mono select-none" id="loading-percent-text">
+        Preparando Brawlers... 0%
+      </p>
+    </div>
+
+    <div class="max-w-2xl w-full mx-auto mb-12">
+      <div class="w-full h-8 bg-black rounded-full border-4 border-black overflow-hidden relative p-1">
+        <div id="loading-progress-bar" class="h-full rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-300 border-2 border-yellow-200 transition-all duration-100 flex items-center justify-end pr-2.5" style="width: 0%">
+          <span class="text-[10px] font-brawl text-black pr-1 font-bold">START</span>
+        </div>
+      </div>
+      <div class="text-[10px] text-slate-500 text-center uppercase tracking-wide font-mono mt-2">
+        DICA DO CLÃ: Obedeça o Papai para ganhar gemas grátis na rodada! 👑
+      </div>
+    </div>
+  </div>
+
+  <!-- MONITOR DE STATUS NO PLACAR -->
+  <footer class="bg-slate-900 border-t-4 border-black p-6">
+    <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-yellow-400 border-4 border-black rounded-lg flex items-center justify-center font-bold text-2xl rotate-[-2deg] shadow-[2px_2px_0_#000]">
+          🏆
+        </div>
+        <div>
+          <h3 class="text-lg font-brawl text-yellow-400 uppercase drop-shadow-[0_2px_0_#000]">
+            Monitoramento de Jogadores Familiares
+          </h3>
+          <p class="text-xs text-slate-400 font-sansAlt font-medium">
+            Clã sincronizado com persistência local de troféus e chat unificado!
+          </p>
+        </div>
+      </div>
+
+      <!-- Placar -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full lg:w-auto">
+        <div class="bg-slate-950 border-2 border-black p-3 rounded-xl flex items-center gap-3">
+          <span class="text-2xl">🔥</span>
+          <div class="text-left">
+            <span class="font-brawl text-xs block text-yellow-400 uppercase">Papai</span>
+            <span class="text-[10px] font-mono text-green-400">● ATIVO</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-950 border-2 border-black p-3 rounded-xl flex items-center gap-3">
+          <span class="text-2xl">🦈</span>
+          <div class="text-left">
+            <span class="font-brawl text-xs block text-blue-400 uppercase">Miguel</span>
+            <span class="text-[10px] font-mono text-green-400" id="status-mi">● ATIVO</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-950 border-2 border-black p-3 rounded-xl flex items-center gap-3">
+          <span class="text-2xl">🌸</span>
+          <div class="text-left">
+            <span class="font-brawl text-xs block text-pink-400 uppercase">Sophia</span>
+            <span class="text-[10px] font-mono text-green-400" id="status-so">● ATIVO</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-950 border-2 border-black p-3 rounded-xl flex items-center gap-3 opacity-55">
+          <span class="text-2xl">👾</span>
+          <div class="text-left">
+            <span class="font-brawl text-xs block text-slate-400 uppercase">Visita</span>
+            <span class="text-[10px] font-mono text-amber-500">○ OFF</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- SISTEMA DE COMPORTAMENTO EM JAVASCRIPT -->
+  <script>
+    let activeTarget = '';
+    let typedPin = '';
+    
+    // Sons utilitários
+    const clickSound = document.getElementById('audio-click');
+    const loginSound = document.getElementById('audio-login');
+
+    const passcodes = {
+      miguel: '123456',
+      sophia: '654321'
+    };
+
+    function playClick() {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(function(err) {
+        console.log("Clique sonora blocked:", err);
+      });
+    }
+
+    function selectProfile(profileId) {
+      playClick();
+      if (profileId === 'papai' || profileId === 'convidado') {
+        startLoginSimulation(profileId + '.html');
+      } else {
+        // Exige digitação de senha
+        activeTarget = profileId;
+        typedPin = '';
+        document.getElementById('pin-display').value = '';
+        
+        // Customiza modal de acordo com quem o usuário clicou
+        const pinTitle = document.getElementById('pin-title');
+        const pinAvatar = document.getElementById('pin-avatar-area');
+        const pinError = document.getElementById('pin-error-text');
+        
+        pinError.innerText = "Insira os 6 dígitos";
+        pinError.className = "text-[10px] text-slate-500 font-mono mt-1";
+        
+        if (profileId === 'miguel') {
+          pinTitle.innerText = "Entrada do Miguel";
+          pinAvatar.innerText = "🦈";
+          pinAvatar.className = "w-16 h-16 bg-blue-900 rounded-2xl mx-auto flex items-center justify-center border-4 border-black text-3xl";
+        } else {
+          pinTitle.innerText = "Entrada da Sophia";
+          pinAvatar.innerText = "🌸";
+          pinAvatar.className = "w-16 h-16 bg-pink-900 rounded-2xl mx-auto flex items-center justify-center border-4 border-black text-3xl";
+        }
+        
+        document.getElementById('pin-modal').classList.remove('hidden');
+      }
+    }
+
+    function closePinModal() {
+      playClick();
+      document.getElementById('pin-modal').classList.add('hidden');
+    }
+
+    function pressNum(num) {
+      playClick();
+      if (typedPin.length < 6) {
+        typedPin += num;
+        document.getElementById('pin-display').value = typedPin;
+      }
+    }
+
+    function clearPin() {
+      playClick();
+      typedPin = '';
+      document.getElementById('pin-display').value = '';
+    }
+
+    function confirmPin() {
+      const pinError = document.getElementById('pin-error-text');
+      
+      if (typedPin === passcodes[activeTarget]) {
+        // Desbloqueia! Toca áudio clássico e fecha o modal
+        document.getElementById('pin-modal').classList.add('hidden');
+        startLoginSimulation(activeTarget + '.html');
+      } else {
+        // Faz barulho de clique e limpa com cor vermelha
+        playClick();
+        pinError.innerText = "PIN INCORRETO! TENTE DE NOVO";
+        pinError.className = "text-xs text-red-500 font-bold font-brawl mt-1 animate-bounce";
+        typedPin = '';
+        document.getElementById('pin-display').value = '';
+      }
+    }
+
+    function startLoginSimulation(destinationUrl) {
+      // Dispara efeito de carregamento antes de navegar
+      loginSound.currentTime = 0;
+      loginSound.play().catch(function(err) {
+        console.log("Play login sound auto-blocked:", err);
+      });
+
+      const overlay = document.getElementById('loading-overlay');
+      const progressBar = document.getElementById('loading-progress-bar');
+      const progressText = document.getElementById('loading-percent-text');
+      
+      overlay.classList.remove('hidden');
+      
+      let percent = 0;
+      const interval = setInterval(function() {
+        percent += Math.floor(Math.random() * 15) + 12;
+        if (percent >= 100) {
+          percent = 100;
+          clearInterval(interval);
+          setTimeout(function() {
+            window.location.href = destinationUrl;
+          }, 500);
+        }
+        progressBar.style.width = percent + '%';
+        progressText.innerText = "Entrando na Arena Familiar... " + percent + "%";
+      }, 150);
+    }
+  </script>
+
+</body>
+</html>
