@@ -224,6 +224,70 @@ export default function App() {
 
     setChatMessages(prev => [...prev, newMsg]);
     playNewMsgSound();
+
+    // Simulação interativa: Recebimento de mensagens automáticas de outros Brawlers com som "sons/new_msg.ogg"
+    setTimeout(() => {
+      const respNow = new Date();
+      const respTime = `${String(respNow.getHours()).padStart(2, '0')}:${String(respNow.getMinutes()).padStart(2, '0')}`;
+      
+      let responder = "Papai (Admin)";
+      let role = "👑 ADMIN";
+      let respAvatar = "imagens/perfil/bull_portrait.png";
+      let txt = "Isso aí! Todo mundo jogando em equipe no QG do Papai! 🛡️🏆";
+      let isRespPin = false;
+
+      // Cria resposta personalizada dependendo de quem enviou e em qual aba
+      if (activeScreen === 'papai') {
+        if (activeChatTab === 'Miguel') {
+          responder = "Miguel";
+          role = "⚡ JOGADOR";
+          respAvatar = "imagens/perfil/fang_portrait.png";
+          txt = "Entendido Papai! Estou de olho nas missões! 👀⚡";
+        } else if (activeChatTab === 'Sophia') {
+          responder = "Sophia";
+          role = "🦄 JOGADORA";
+          respAvatar = "imagens/perfil/penny_portrait.png";
+          txt = "Sim papai! Vou fazer tudo direitinho e com carinho! 🦄🍬";
+        } else {
+          responder = "Miguel";
+          role = "⚡ JOGADOR";
+          respAvatar = "imagens/perfil/fang_portrait.png";
+          txt = "imagens/emoj_miguel/fang_happy_pin.png"; // Envia um PIN de volta!
+          isRespPin = true;
+        }
+      } else if (activeScreen === 'miguel') {
+        responder = "Papai (Admin)";
+        role = "👑 ADMIN";
+        respAvatar = "imagens/perfil/bull_portrait.png";
+        txt = "Mandou muito bem, Miguel! Continue focado nas tarefas para as recompensas! ⚔️💎";
+      } else if (activeScreen === 'sophia') {
+        responder = "Papai (Admin)";
+        role = "👑 ADMIN";
+        respAvatar = "imagens/perfil/bull_portrait.png";
+        txt = "Princesa Sophia! Você está brilhando hoje no QG! 🌸✨";
+      } else {
+        responder = "Papai (Admin)";
+        role = "👑 ADMIN";
+        respAvatar = "imagens/perfil/bull_portrait.png";
+        txt = "Seja bem-vindo ao clã como aliado no QG! 👾🎮";
+      }
+
+      const incomingMsg: Message = {
+        id: Date.now(), // ID único baseado em timestamp
+        text: txt,
+        sender: responder,
+        senderRole: role,
+        avatarFile: respAvatar,
+        channel: activeChatTab,
+        timestamp: respTime,
+        isPin: isRespPin
+      };
+
+      setChatMessages(prev => [...prev, incomingMsg]);
+      
+      // DISPARA O SOM DO LADO DO SERVIDOR REAL NO RECEBIMENTO
+      playNewMsgSound();
+    }, 3000);
   };
 
   // Toggle de status Online/Offline do perfil

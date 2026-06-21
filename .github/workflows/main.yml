@@ -25,6 +25,7 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: ${{ secrets.FTP_DIR }}
+        port: ${{ secrets.FTP_PORT }}
         # Exclui arquivos de setup local da pipeline para otimizar o transporte
         exclude: |
           **/.git*
