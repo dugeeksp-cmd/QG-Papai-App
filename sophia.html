@@ -2,10 +2,11 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>QG do Papai - Painel Sophia</title>
   
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sophia.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -20,149 +21,260 @@
     }
   </script>
 </head>
-<body class="brawl-stripe-bg p-4 flex flex-col justify-between min-h-screen">
+<body class="brawl-stripe-bg p-3 md:p-4 flex flex-col justify-between min-h-screen select-none">
 
   <!-- Efeitos sonoros reais localizados de forma relativa -->
   <audio id="audio-click" src="sons/menu_click_01.ogg" preload="auto"></audio>
   <audio id="audio-msg" src="sons/new_msg.ogg" preload="auto"></audio>
+  <audio id="audio-unlock" src="sons/load_login.ogg" preload="auto"></audio>
   <audio id="audio-error" src="sons/menu_click_01.ogg" preload="auto"></audio>
 
-  <!-- TELA DE BLOQUEIO LOCAL (SE NÃO LOGADO PELO HOME) -->
-  <div id="lockscreen" class="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 hidden">
-    <div class="brawl-card max-w-sm w-full bg-[#20152b] border-4 border-black p-6 relative">
+  <!-- TELA DE BLOQUEIO LOCAL 100% VIRTUAL (Evita teclado nativo de celular) -->
+  <div id="lockscreen" class="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-3">
+    <div class="brawl-card max-w-sm w-full bg-[#20152b] border-4 border-black p-5 relative theme-sophia-container">
       
-      <div class="text-center mb-6">
-        <div class="w-16 h-16 bg-pink-600 rounded-2xl mx-auto flex items-center justify-center border-4 border-black shadow-[3px_3px_0_#000] mb-3 text-3xl">
-          🌸
+      <div class="text-center mb-4">
+        <!-- Avatar decorativo giratório -->
+        <div class="w-20 h-20 bg-pink-600 rounded-3xl mx-auto flex items-center justify-center border-4 border-black shadow-[4px_4px_0_#000] mb-3 text-4xl relative overflow-hidden">
+          <img src="imagens/perfil/penny_portrait.png" alt="Sophia" class="w-full h-full object-cover" onerror="this.src='', this.className='hidden'">
+          <span class="absolute text-3xl">🌸</span>
         </div>
-        <h3 class="text-2xl font-brawl text-white uppercase drop-shadow-[0_2px_0_#000]">
-          Entrada da Sophia
+        <h3 class="text-3xl font-brawl text-white uppercase drop-shadow-[0_2.5px_0_#000] brawl-text-stroke">
+          Entrada de Sophia
         </h3>
-        <p class="text-xs text-slate-300 mt-1">
-          Princesa do QG! Insira o seu PIN familiar de 6 dígitos para destravar o painel.
+        <p class="text-xs text-pink-250 mt-1 font-semibold">
+          Princesa do QG! Selecione os botões virtuais abaixo para digitar seu PIN familiar de 6 dígitos.
         </p>
       </div>
 
-      <!-- Display Visual do PIN -->
-      <div class="w-full py-3.5 bg-black rounded-xl border-4 border-black text-center mb-5">
-        <input type="password" id="pin-display" readonly placeholder="------" class="bg-transparent text-center font-brawl text-2xl text-yellow-300 tracking-[0.5em] w-full focus:outline-none placeholder:text-slate-800">
-        <p id="lock-error-text" class="text-[10px] text-slate-500 font-mono mt-1">Dica de Desenvolvimento: 654321</p>
+      <!-- Slots Estáticos de Digitação de Senha (Sem input nativo!) -->
+      <div class="brawl-pin-slots-container">
+        <div id="slot-0" class="brawl-pin-slot">•</div>
+        <div id="slot-1" class="brawl-pin-slot">•</div>
+        <div id="slot-2" class="brawl-pin-slot">•</div>
+        <div id="slot-3" class="brawl-pin-slot">•</div>
+        <div id="slot-4" class="brawl-pin-slot">•</div>
+        <div id="slot-5" class="brawl-pin-slot">•</div>
       </div>
 
-      <!-- Teclado Numérico Brawl Stars  -->
-      <div class="brawl-pin-grid mb-6">
-        <button onclick="pressNum('1')" class="brawl-pin-btn">1</button>
-        <button onclick="pressNum('2')" class="brawl-pin-btn">2</button>
-        <button onclick="pressNum('3')" class="brawl-pin-btn">3</button>
-        <button onclick="pressNum('4')" class="brawl-pin-btn">4</button>
-        <button onclick="pressNum('5')" class="brawl-pin-btn">5</button>
-        <button onclick="pressNum('6')" class="brawl-pin-btn">6</button>
-        <button onclick="pressNum('7')" class="brawl-pin-btn">7</button>
-        <button onclick="pressNum('8')" class="brawl-pin-btn">8</button>
-        <button onclick="pressNum('9')" class="brawl-pin-btn">9</button>
-        <button onclick="clearPin()" class="brawl-pin-btn bg-red-700 text-xs font-brawl">LIMPAR</button>
-        <button onclick="pressNum('0')" class="brawl-pin-btn">0</button>
-        <button onclick="confirmPin()" class="brawl-pin-btn bg-green-500 font-brawl text-lg font-bold">🚀</button>
+      <!-- Texto Auxiliar de Dicas -->
+      <p id="lock-error-text" class="text-center text-[10px] text-pink-300 font-mono tracking-wider bg-black/40 py-1.5 rounded-lg border border-pink-900/40 mb-4 uppercase">
+        Dica Familiar: 654321
+      </p>
+
+      <!-- Teclado Numérico Virtual Customizado -->
+      <div class="brawl-pin-grid mb-4">
+        <button onclick="pressLockNum('1')" class="brawl-pin-btn">1</button>
+        <button onclick="pressLockNum('2')" class="brawl-pin-btn">2</button>
+        <button onclick="pressLockNum('3')" class="brawl-pin-btn">3</button>
+        <button onclick="pressLockNum('4')" class="brawl-pin-btn">4</button>
+        <button onclick="pressLockNum('5')" class="brawl-pin-btn">5</button>
+        <button onclick="pressLockNum('6')" class="brawl-pin-btn">6</button>
+        <button onclick="pressLockNum('7')" class="brawl-pin-btn">7</button>
+        <button onclick="pressLockNum('8')" class="brawl-pin-btn">8</button>
+        <button onclick="pressLockNum('9')" class="brawl-pin-btn">9</button>
+        <button onclick="clearLockPin()" class="brawl-pin-btn bg-red-700 hover:bg-red-650 text-xs font-brawl">APAGAR</button>
+        <button onclick="pressLockNum('0')" class="brawl-pin-btn">0</button>
+        <button onclick="confirmLockPin()" class="brawl-pin-btn bg-green-500 hover:bg-green-400 font-brawl text-lg shadow-[0_4px_0_#136700] flex items-center justify-center">🚀</button>
       </div>
 
       <div class="text-center">
-        <a href="index.html" onclick="playClick()" class="text-xs text-red-400 font-bold hover:underline">Voltar à tela de perfis</a>
+        <a href="index.html" onclick="playClick()" class="text-xs text-red-400 font-bold hover:underline font-brawl tracking-wider uppercase font-semibold">Voltar ao painel de perfis</a>
       </div>
 
     </div>
   </div>
 
-  <!-- CONTEÚDO PRINCIPAL (REVELADO AO DESTRANCAR) -->
-  <div id="main-content" class="max-w-6xl w-full mx-auto flex flex-col gap-6">
+  <!-- CONTEÚDO PRINCIPAL (Exibido após o PIN correto) -->
+  <div id="main-content" class="max-w-6xl w-full mx-auto flex flex-col gap-4 md:gap-6 hidden">
 
     <!-- Topo -->
-    <div class="flex justify-between items-center bg-black/60 p-4 border-2 border-black rounded-2xl">
+    <div class="flex justify-between items-center bg-black/60 p-3 md:p-4 border-2 border-black rounded-2xl">
       <div class="flex items-center gap-3">
-        <span class="text-3xl">🌸🦄</span>
-        <span class="font-brawl text-2xl tracking-wide uppercase text-pink-400 text-shadow">Sala da Sophia</span>
+        <span class="text-3xl animate-bounce">🌸🦄</span>
+        <span class="font-brawl text-xl md:text-2xl tracking-wide uppercase text-pink-400 drop-shadow-[0_2px_0_#000] brawl-text-stroke-sm">Sala da Sophia</span>
       </div>
       
       <div class="flex items-center gap-3">
         <!-- Indicador de Transmissão Meet Familiar se Ativado pelo Papai -->
-        <a id="meet-indicator-btn" href="#" target="_blank" class="hidden animate-bounce bg-red-600 hover:bg-red-500 border-2 border-black font-brawl uppercase text-[10px] px-3 py-1.5 rounded-full text-white shadow-[2px_2px_0_#000]">
+        <a id="meet-indicator-btn" href="#" target="_blank" class="hidden animate-pulse bg-red-600 hover:bg-red-500 border-2 border-black font-brawl uppercase text-[10px] px-3 py-1.5 rounded-full text-white shadow-[2px_2px_0_#000]">
           🎥 REUNIÃO ATIVA!
         </a>
         
-        <a href="index.html" onclick="logoutProfile()" class="brawl-btn-red text-xs px-4 py-2 font-brawl uppercase">
+        <a href="index.html" onclick="logoutProfile()" class="brawl-btn-red text-[10px] md:text-xs px-4 py-2 font-brawl uppercase">
           Sair do QG 🚪
         </a>
       </div>
     </div>
 
-    <!-- Interface Adaptada: Tema Sophia (Lilás, Roxo e Rosa) -->
-    <main class="theme-sophia bg-gradient-to-b from-[#451b5c] to-[#1e052c] border-4 border-pink-400 rounded-3xl p-6 shadow-[0_10px_0_rgba(0,0,0,0.5)]">
+    <!-- Interface Ativa Superior: Perfil Battle Card da Sophia -->
+    <main class="theme-sophia-container rounded-3xl p-4 md:p-6">
       
-      <!-- Infos do Personagem -->
-      <section class="bg-black/40 border-4 border-black rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-16 h-16 bg-pink-900/50 border-2 border-pink-400 rounded-xl flex items-center justify-center text-4xl shadow-inner relative overflow-hidden">
-            <img src="imagens/perfil/penny_portrait.png" alt="Sophia" class="w-full h-full object-cover" onerror="this.style.display='none'">
-            <span class="absolute text-3xl">🌸</span>
-          </div>
-          <div>
-            <h3 class="text-2xl font-brawl text-pink-300 uppercase tracking-wide">Sophia</h3>
-            <span class="bg-purple-600 text-white border-2 border-black font-brawl uppercase text-[9px] px-2.5 py-0.5 rounded-full inline-block">
-              🦄 Princesa Do Clã
-            </span>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- COLUNA 1: EXIBIÇÃO DO PROFILE BATTLE CARD -->
+        <div class="lg:col-span-5 flex flex-col justify-between">
+          <span class="bg-black/45 text-pink-300 font-brawl text-2xs px-3 py-1 bg-fuchsia-950/40 rounded-full border border-black uppercase text-center mb-2 tracking-widest">
+            ✨ Seu Battle Card de Princesa
+          </span>
+          
+          <!-- Battle Card com Live BG de Ranks -->
+          <div id="battle-card-display" class="brawl-battle-card bg-rank-mythic p-5 flex flex-col justify-between h-72 relative z-10">
+            
+            <div class="flex justify-between items-start relative z-10">
+              <!-- Nível Customizado -->
+              <div class="bg-black/75 border-2 border-black px-3 py-1 rounded-xl text-xs font-brawl text-pink-300 flex items-center gap-1.5">
+                <span>NÍVEL</span>
+                <span id="card-level-val" class="text-sm font-black text-white">62</span>
+              </div>
+              
+              <!-- Tag de Aliança -->
+              <span class="bg-pink-600 text-white font-brawl text-[9px] border-2 border-black tracking-widest rounded-md px-2 py-0.5 shadow-[1px_1px_0_#050505]">
+                PRINCESA UNICÓRNIO
+              </span>
+            </div>
+
+            <!-- Centro: Avatar e Nickname do Brawler -->
+            <div class="flex items-center gap-4 relative z-10">
+              <div class="w-20 h-20 bg-slate-900/60 border-4 border-black rounded-2xl flex items-center justify-center relative overflow-hidden shadow-2xl">
+                <img id="card-avatar-img" src="imagens/perfil/penny_portrait.png" alt="Brawler Portait" class="w-full h-full object-cover">
+              </div>
+              
+              <div class="text-left">
+                <h4 id="card-name-val" class="text-2xl md:text-3xl font-brawl text-white uppercase tracking-wider drop-shadow-[0_3px_0_#000] brawl-text-stroke">
+                  Sophia
+                </h4>
+                <div class="bg-black/60 border border-pink-500/20 px-2 py-0.5 rounded text-[10px] text-pink-300 font-mono font-bold tracking-wide">
+                  TAG: #SOPHIA-QG
+                </div>
+              </div>
+            </div>
+
+            <!-- Rodapé: Troféus com Barra Estilizada -->
+            <div class="relative z-10 w-full">
+              <div class="flex justify-between items-center text-xs font-brawl text-yellow-300 mb-1">
+                <span>PONTUAÇÃO DE TROFÉUS</span>
+                <span id="card-trophies-val" class="text-sm text-white drop-shadow-[0_1px_0_#000]">🏆 16,290</span>
+              </div>
+              
+              <div class="w-full h-3 bg-black rounded-full border-2 border-black overflow-hidden p-0.5">
+                <div id="trophy-progress" class="h-full rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500 duration-300" style="width: 72%"></div>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        <div class="flex gap-2">
-          <div class="bg-black/60 border-2 border-black rounded-xl px-4 py-1.5 flex items-center gap-1.5 text-xs text-yellow-300 font-brawl">
-            🏆 16,290 Troféus do Clã
+        <!-- COLUNA 2: CONFIGURAÇÃO DE PERSONALIZAÇÃO DA SOPHIA -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
+          <div class="bg-black/45 border-4 border-black rounded-2xl p-4 flex flex-col gap-4">
+            
+            <h3 class="text-lg font-brawl text-yellow-500 uppercase tracking-wider flex items-center gap-2">
+              🦄 Ajustes do Perfil da Princesa
+            </h3>
+
+            <!-- 1. Troca de Nickname e Tune dos Status -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-[10px] font-brawl uppercase text-pink-300 block mb-1">Nome no QG:</label>
+                <input type="text" id="input-nickname" value="Sophia" oninput="updateNickname(this.value)" class="w-full bg-slate-900 border-2 border-black rounded-xl p-2.5 text-white font-brawl text-sm focus:outline-none focus:border-pink-400">
+              </div>
+
+              <!-- Tuning de Troféus (+/- 100) e Nível (+/- 1) -->
+              <div class="flex gap-2">
+                <div class="w-1/2">
+                  <label class="text-[10px] font-brawl uppercase text-yellow-400 block mb-1">Troféus:</label>
+                  <div class="flex items-center gap-1 bg-slate-900 border-2 border-black rounded-xl p-1 justify-between">
+                    <button onclick="tuneTrophies(-200)" class="w-7 h-7 bg-red-600 border border-black rounded text-white font-bold flex items-center justify-center hover:bg-red-500">-</button>
+                    <span id="status-trophies-text" class="text-xs font-brawl text-white">16.2k</span>
+                    <button onclick="tuneTrophies(200)" class="w-7 h-7 bg-green-600 border border-black rounded text-white font-bold flex items-center justify-center hover:bg-green-500">+</button>
+                  </div>
+                </div>
+
+                <div class="w-1/2">
+                  <label class="text-[10px] font-brawl uppercase text-fuchsia-400 block mb-1">Nível Família:</label>
+                  <div class="flex items-center gap-1 bg-slate-900 border-2 border-black rounded-xl p-1 justify-between">
+                    <button onclick="tuneLevel(-1)" class="w-7 h-7 bg-red-600 border border-black rounded text-white font-bold flex items-center justify-center hover:bg-red-500">-</button>
+                    <span id="status-level-text" class="text-xs font-brawl text-white">62</span>
+                    <button onclick="tuneLevel(1)" class="w-7 h-7 bg-green-600 border border-black rounded text-white font-bold flex items-center justify-center hover:bg-green-500">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Escolha de Avatar (imagens/perfil/) -->
+            <div>
+              <label class="text-[10px] font-brawl uppercase text-pink-300 block mb-1">Selecione seu Avatar Favorito:</label>
+              <div class="grid grid-cols-5 sm:grid-cols-10 gap-2 overflow-x-auto pb-1" id="avatar-selector-grid">
+                <!-- Injetado dinamicamente via JS -->
+              </div>
+            </div>
+
+            <!-- 3. Escolha de Battle Card Rank (imagens/bg-perfil/) -->
+            <div>
+              <label class="text-[10px] font-brawl uppercase text-yellow-400 block mb-1.5">Escolha seu Rank no Jogo (Battle Card Theme):</label>
+              <div class="grid grid-cols-4 gap-2">
+                <button id="bg-gold" onclick="selectBattleCardBg('gold', 'imagens/bg-perfil/battle_card_gold.png')" class="brawl-bg-option bg-rank-gold">Ouro</button>
+                <button id="bg-diamond" onclick="selectBattleCardBg('diamond', 'imagens/bg-perfil/battle_card_diamond.png')" class="brawl-bg-option bg-rank-diamond">Diamante</button>
+                <button id="bg-mythic" onclick="selectBattleCardBg('mythic', 'imagens/bg-perfil/battle_card_mythic.png')" class="brawl-bg-option bg-rank-mythic active">Mítico</button>
+                <button id="bg-masters" onclick="selectBattleCardBg('masters', 'imagens/bg-perfil/battle_card_masters.png')" class="brawl-bg-option bg-rank-masters">Mestres</button>
+              </div>
+            </div>
+
           </div>
         </div>
-      </section>
 
-      <!-- Painel de Chat Integrado -->
+      </div>
+
+      <!-- PAINEL DO CANAL DE CHAT INTEGRADO COM ABAS -->
       <section class="mt-6">
         
         <!-- Abas do Chat -->
         <div class="brawl-tab-container select-none">
-          <button id="tab-Familia" onclick="switchTab('Familia')" class="brawl-tab active-familia">👪 Família</button>
-          <button id="tab-Miguel" onclick="switchTab('Miguel')" class="brawl-tab">🦈 Miguel</button>
-          <button id="tab-Sophia" onclick="switchTab('Sophia')" class="brawl-tab">🦄 Sophia</button>
+          <button id="tab-Familia" onclick="switchChannel('Familia')" class="brawl-tab active-familia">👪 Família</button>
+          <button id="tab-Miguel" onclick="switchChannel('Miguel')" class="brawl-tab">🦈 Miguel</button>
+          <button id="tab-Sophia" onclick="switchChannel('Sophia')" class="brawl-tab">🦄 Sophia</button>
         </div>
 
         <!-- Chat Box -->
         <div class="brawl-chat-box relative">
+          
           <div class="bg-black/30 px-3 py-1.5 rounded-xl text-xs text-pink-300 font-mono flex justify-between items-center">
-            <span>Canal Ativo: <strong id="channel-name-title">👪 FAMÍLIA (Todas as frentes)</strong></span>
-            <span class="text-[9px] bg-pink-600/20 border border-pink-400/30 text-pink-300 px-2 py-0.5 rounded uppercase font-bold">Modo Chat</span>
+            <span>Canal Ativo: <strong id="channel-name-title font-bold">👪 FAMÍLIA (Todas as frentes integradas)</strong></span>
+            <span class="text-[9px] bg-pink-600/25 border border-pink-400/40 text-pink-300 px-3 py-0.5 rounded uppercase font-bold">Chat do Clã</span>
           </div>
 
-          <!-- Feed de Mensagens -->
-          <div class="chat-message-list" id="chat-feed">
-            <!-- Mensagens injetadas via JS -->
+          <!-- Feed de Mensagens do Chat -->
+          <div class="chat-message-list min-h-[180px] max-h-[220px]" id="chat-feed">
+            <!-- Mensagens persistentes do canal serão injetadas aqui -->
           </div>
 
-          <!-- Input e Envio com áudio -->
-          <div class="flex flex-col gap-2 border-t-2 border-black pt-4 relative">
+          <!-- Rodapé do Input, Gaveta de Emojis e Envio -->
+          <div class="flex flex-col gap-2 border-t-2 border-black pt-3 relative">
             
-            <!-- Gaveta de Emojis / Pins flutuante -->
-            <div id="emoji-drawer" class="absolute bottom-20 left-0 hidden w-64 p-3 brawl-emoji-drawer flex flex-col gap-2">
-              <span class="text-xs uppercase font-brawl text-yellow-400">Pins Disponíveis (Sophia):</span>
+            <!-- Gaveta de Emojis / Pins flutuantes da Sophia -->
+            <div id="emoji-drawer" class="absolute bottom-16 left-0 hidden w-64 p-3 brawl-emoji-drawer flex flex-col gap-2">
+              <span class="text-xs uppercase font-brawl text-yellow-400">Pins Exclusivos (Sophia):</span>
               <div class="grid grid-cols-4 gap-2">
-                <!-- Pins exclusivos da Sophia -->
-                <button onclick="sendPin('imagens/emoj_sophia/emoji_penny_happy.png')" class="hover:scale-110 active:scale-95 transition-transform p-1 bg-black/40 rounded border border-pink-500/30">
-                  <img src="imagens/emoj_sophia/emoji_penny_happy.png" alt="Happy" class="w-10 h-10 object-contain mx-auto">
+                <!-- Pins da Sophia carregados com fallback visual -->
+                <button onclick="sendPin('imagens/emoj_sophia/emoji_penny_happy.png')" class="hover:scale-110 active:scale-95 transition-transform p-1.5 bg-black/40 rounded border border-pink-500/30 flex items-center justify-center">
+                  <img src="imagens/emoj_sophia/emoji_penny_happy.png" alt="Penny Happy" class="w-10 h-10 object-contain mx-auto" onerror="this.src='', this.className='hidden'">
+                  <span class="text-xs text-pink-300 font-brawl">🦄😄</span>
                 </button>
-                <button onclick="sendPin('imagens/emoj_sophia/emoji_penny_sad.png')" class="hover:scale-110 active:scale-95 transition-transform p-1 bg-black/40 rounded border border-pink-500/30">
-                  <img src="imagens/emoj_sophia/emoji_penny_sad.png" alt="Sad" class="w-10 h-10 object-contain mx-auto">
+                <button onclick="sendPin('imagens/emoj_sophia/emoji_penny_sad.png')" class="hover:scale-110 active:scale-95 transition-transform p-1.5 bg-black/40 rounded border border-pink-500/30 flex items-center justify-center">
+                  <img src="imagens/emoj_sophia/emoji_penny_sad.png" alt="Penny Sad" class="w-10 h-10 object-contain mx-auto" onerror="this.src='', this.className='hidden'">
+                  <span class="text-xs text-pink-300 font-brawl">🦄😢</span>
                 </button>
-                <!-- Generics -->
-                <button onclick="insertEmoji('🦄')" class="text-2xl hover:scale-110 active:scale-95">🦄</button>
-                <button onclick="insertEmoji('🌸')" class="text-2xl hover:scale-110 active:scale-95">🌸</button>
-                <button onclick="insertEmoji('😄')" class="text-2xl hover:scale-110 active:scale-95">😄</button>
-                <button onclick="insertEmoji('✨')" class="text-2xl hover:scale-110 active:scale-95">✨</button>
+                <button onclick="insertEmoji('🦄')" class="text-3xl hover:scale-110 p-1">🦄</button>
+                <button onclick="insertEmoji('🌸')" class="text-3xl hover:scale-110 p-1">🌸</button>
+                <button onclick="insertEmoji('✨')" class="text-3xl hover:scale-110 p-1">✨</button>
+                <button onclick="insertEmoji('😄')" class="text-3xl hover:scale-110 p-1">😄</button>
+                <button onclick="insertEmoji('👑')" class="text-3xl hover:scale-110 p-1">👑</button>
+                <button onclick="insertEmoji('🎀')" class="text-3xl hover:scale-110 p-1">🎀</button>
               </div>
             </div>
 
+            <!-- Linha de Input -->
             <div class="flex gap-2">
               <button onclick="toggleEmojiDrawer()" class="brawl-btn-yellow font-brawl text-2xl uppercase px-4 whitespace-nowrap flex items-center justify-center">
                 ☺
@@ -170,7 +282,7 @@
               
               <input type="text" id="chat-input" placeholder="Responda direto no canal da Sophia..." class="flex-grow bg-slate-900 border-2 border-black rounded-xl p-3 text-white text-sm focus:outline-none focus:border-pink-400 font-semibold" onkeydown="handleKeyDown(event)">
               
-              <button onclick="sendMessage()" class="brawl-btn-purple font-brawl text-xs uppercase px-6 py-3 whitespace-nowrap">
+              <button onclick="sendMessage()" class="brawl-btn-pink-vibrant font-brawl text-xs uppercase px-5 py-3.5 whitespace-nowrap">
                 Mandar 🚀
               </button>
             </div>
@@ -184,29 +296,57 @@
 
   </div>
 
-  <footer class="mt-8 py-4 text-center text-xs text-white/40">
+  <footer class="mt-8 py-3 text-center text-xs text-white/35">
     ⚡ QG DO PAPAI • Brawl Stars Theme © 2026
   </footer>
 
+  <!-- CONTROLE EM JAVASCRIPT - SOPHIA BOARD -->
   <script>
+    const defaultPortraits = [
+      'penny_portrait.png',
+      'fang_portrait.png',
+      'leon_portrait.png',
+      'colt_portrait.png',
+      'shelly_portrait.png',
+      'spike_portrait.png',
+      'crow_portrait.png',
+      'mortis_portrait.png',
+      'bull_portrait.png',
+      'el_primo_portrait.png'
+    ];
+
+    let typedPin = '';
+    const correctPin = '654321';
+    let currentChannel = 'Familia';
+
+    // Perfil Editável de Sophia persistido
+    let playerProfile = {
+      nickname: "Sophia",
+      avatar: "penny_portrait.png",
+      bgRank: "mythic",
+      trophies: 16290,
+      level: 62
+    };
+
+    // Referências Sonoras
     const clickSound = document.getElementById('audio-click');
     const msgSound = document.getElementById('audio-msg');
     const errorSound = document.getElementById('audio-error');
-
-    let typedPin = '';
-    let currentChannel = 'Familia'; // 'Familia' | 'Miguel' | 'Sophia'
+    const unlockSound = document.getElementById('audio-unlock');
 
     function playClick() {
       clickSound.currentTime = 0;
-      clickSound.play().catch(err => console.log('Click sound play blocked:', err));
+      clickSound.play().catch(e => console.log('blocked', e));
     }
 
     function playMsg() {
       msgSound.currentTime = 0;
-      msgSound.play().catch(err => console.log('Msg sound play blocked:', err));
+      msgSound.play().catch(e => console.log('blocked', e));
     }
 
+    // Inicialização da Tela
     window.addEventListener('load', () => {
+      // 1. Verificar Estado do Bloqueio familiar
       const alreadyLoggedIn = localStorage.getItem('qg_logged_in_sophia') === 'true';
       if (!alreadyLoggedIn) {
         document.getElementById('lockscreen').classList.remove('hidden');
@@ -214,65 +354,186 @@
       } else {
         document.getElementById('lockscreen').classList.add('hidden');
         document.getElementById('main-content').classList.remove('hidden');
+        initializeBoard();
       }
 
+      // 2. Verificar Meet do Papai
       checkGoogleMeetLink();
-      loadChat();
     });
 
-    function checkGoogleMeetLink() {
-      const savedLink = localStorage.getItem('qg_meet_link') || 'https://meet.google.com/abc-defg-hij';
-      const isMeetActive = localStorage.getItem('qg_meet_active') === 'true';
-      const indicator = document.getElementById('meet-indicator-btn');
-      
-      if (isMeetActive) {
-        indicator.href = savedLink;
-        indicator.classList.remove('hidden');
-      } else {
-        indicator.classList.add('hidden');
-      }
-    }
-
-    function logoutProfile() {
-      playClick();
-      localStorage.removeItem('qg_logged_in_sophia');
-    }
-
-    function pressNum(num) {
+    // SISTEMA DE LOCKSCREEN COM TECLADO VIRTUAL MOBILE-PROOF
+    function pressLockNum(num) {
       playClick();
       if (typedPin.length < 6) {
         typedPin += num;
-        document.getElementById('pin-display').value = typedPin;
+        updatePinSlots();
+      }
+      
+      // Auto-confirma se digitar todos os 6 dígitos
+      if (typedPin.length === 6) {
+        setTimeout(confirmLockPin, 250);
       }
     }
 
-    function clearPin() {
+    function clearLockPin() {
       playClick();
       typedPin = '';
-      document.getElementById('pin-display').value = '';
+      updatePinSlots();
     }
 
-    function confirmPin() {
-      const pinErr = document.getElementById('lock-error-text');
-      if (typedPin === '654321') {
-        playMsg();
-        localStorage.setItem('qg_logged_in_sophia', 'true');
-        document.getElementById('lockscreen').classList.add('hidden');
-        document.getElementById('main-content').classList.remove('hidden');
-        checkGoogleMeetLink();
-        loadChat();
-      } else {
-        errorSound.currentTime = 0;
-        errorSound.play().catch(err => console.log(err));
-        typedPin = '';
-        document.getElementById('pin-display').value = '';
-        pinErr.innerText = "PIN INCORRETO! TENTE DE NOVO (Hint: 654321)";
-        pinErr.className = "text-xs text-red-500 font-bold font-brawl mt-1 animate-bounce";
+    function updatePinSlots() {
+      for (let i = 0; i < 6; i++) {
+        const slotEl = document.getElementById('slot-' + i);
+        if (i < typedPin.length) {
+          slotEl.classList.add('filled');
+          slotEl.innerText = '⭐';
+        } else {
+          slotEl.classList.remove('filled');
+          slotEl.innerText = '•';
+        }
       }
     }
 
-    // CHAT MANAGEMENT
-    function switchTab(channelId) {
+    function confirmLockPin() {
+      const errorText = document.getElementById('lock-error-text');
+      if (typedPin === correctPin) {
+        // Sucesso! Toca o som de load e entra
+        unlockSound.currentTime = 0;
+        unlockSound.play().catch(e => console.log(e));
+        
+        localStorage.setItem('qg_logged_in_sophia', 'true');
+        
+        document.getElementById('lockscreen').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+        initializeBoard();
+      } else {
+        // Erro
+        errorSound.currentTime = 0;
+        errorSound.play().catch(e => console.log(e));
+        
+        typedPin = '';
+        updatePinSlots();
+        
+        errorText.innerText = "PIN INCORRETO! TENTE DE NOVO (Hint: 654321)";
+        errorText.className = "text-center text-[11px] text-red-500 font-bold font-brawl bg-black/40 py-1.5 rounded-lg border border-red-500 animate-bounce mb-4";
+      }
+    }
+
+    // Inicialização da customização e chat
+    function initializeBoard() {
+      // Carregar Perfil Salvo se houver
+      const savedProfile = localStorage.getItem('qg_sophia_profile');
+      if (savedProfile) {
+        playerProfile = JSON.parse(savedProfile);
+      }
+      
+      // Renderizar o Grade de seleção de avatares brawler
+      renderAvatarSelectors();
+
+      // Aplicar Configurações no Layout do Battle Card
+      applyProfileChanges();
+
+      // Carregar mensagens canal ativo
+      loadChat();
+    }
+
+    // Gerador de Avatares da pasta imagens/perfil/
+    function renderAvatarSelectors() {
+      const grid = document.getElementById('avatar-selector-grid');
+      grid.innerHTML = '';
+      
+      defaultPortraits.forEach(portrait => {
+        const optionBtn = document.createElement('button');
+        optionBtn.className = "brawl-avatar-option " + (playerProfile.avatar === portrait ? "active" : "");
+        optionBtn.style.position = "relative";
+        
+        optionBtn.innerHTML = `
+          <img src="imagens/perfil/${portrait}" alt="${portrait}" class="w-full h-full object-cover">
+        `;
+        
+        optionBtn.onclick = () => {
+          playClick();
+          document.querySelectorAll('.brawl-avatar-option').forEach(b => b.classList.remove('active'));
+          optionBtn.classList.add('active');
+          
+          playerProfile.avatar = portrait;
+          saveProfile();
+          applyProfileChanges();
+        };
+        
+        grid.appendChild(optionBtn);
+      });
+    }
+
+    // Salvar Perfil localmente
+    function saveProfile() {
+      localStorage.setItem('qg_sophia_profile', JSON.stringify(playerProfile));
+    }
+
+    // Sincronizar UI com as alterações do perfil
+    function applyProfileChanges() {
+      // 1. Nome
+      document.getElementById('card-name-val').innerText = playerProfile.nickname;
+      document.getElementById('input-nickname').value = playerProfile.nickname;
+      
+      // 2. Avatar
+      document.getElementById('card-avatar-img').src = "imagens/perfil/" + playerProfile.avatar;
+      
+      // 3. Trophies
+      document.getElementById('card-trophies-val').innerText = "🏆 " + Number(playerProfile.trophies).toLocaleString('pt-BR');
+      document.getElementById('status-trophies-text').innerText = (playerProfile.trophies / 1000).toFixed(1) + "k";
+      
+      // Calcule barra de progresso
+      const pct = Math.min(100, Math.max(10, (playerProfile.trophies / 25000) * 100));
+      document.getElementById('trophy-progress').style.width = pct + "%";
+
+      // 4. Level
+      document.getElementById('card-level-val').innerText = playerProfile.level;
+      document.getElementById('status-level-text').innerText = playerProfile.level;
+
+      // 5. BG Rank Class
+      const cardEl = document.getElementById('battle-card-display');
+      cardEl.className = "brawl-battle-card p-5 flex flex-col justify-between h-72 relative z-10 bg-rank-" + playerProfile.bgRank;
+      
+      // Aplicar imagem real de fundo do rank se disponível
+      cardEl.style.backgroundImage = `url('imagens/bg-perfil/battle_card_${playerProfile.bgRank}.png')`;
+
+      // Atualizar classe ativa do botão de rank
+      document.querySelectorAll('.brawl-bg-option').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('bg-' + playerProfile.bgRank);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    // Funções de tuning de status
+    function tuneTrophies(amount) {
+      playClick();
+      playerProfile.trophies = Math.max(0, playerProfile.trophies + amount);
+      saveProfile();
+      applyProfileChanges();
+    }
+
+    function tuneLevel(amount) {
+      playClick();
+      playerProfile.level = Math.max(1, playerProfile.level + amount);
+      saveProfile();
+      applyProfileChanges();
+    }
+
+    function updateNickname(value) {
+      playerProfile.nickname = value.trim() || 'Sophia';
+      saveProfile();
+      document.getElementById('card-name-val').innerText = playerProfile.nickname;
+    }
+
+    function selectBattleCardBg(rankKey, bgPath) {
+      playClick();
+      playerProfile.bgRank = rankKey;
+      saveProfile();
+      applyProfileChanges();
+    }
+
+    // CONTROLE DE TABELAS DE CANAL DE CHAT
+    function switchChannel(channelId) {
       playClick();
       currentChannel = channelId;
 
@@ -328,7 +589,7 @@
             id: 1,
             sender: "Papai (Admin)",
             senderRole: "👑 ADMIN",
-            avatarFile: "imagens/perfil/bull_portrait.png",
+            avatarFile: "bull_portrait.png",
             text: "Sejam bem-vindos ao clã oficial familiar! 🚀 Todas as missões do dia estão de pé!",
             timestamp: "12:00",
             isPin: false
@@ -337,7 +598,7 @@
             id: 2,
             sender: "Miguel",
             senderRole: "⚡ JOGADOR",
-            avatarFile: "imagens/perfil/fang_portrait.png",
+            avatarFile: "fang_portrait.png",
             text: "Estou jogando e terminando de organizar a estante, pai! 🦈",
             timestamp: "12:01",
             isPin: false
@@ -349,7 +610,7 @@
             id: 3,
             sender: "Papai (Admin)",
             senderRole: "👑 ADMIN",
-            avatarFile: "imagens/perfil/bull_portrait.png",
+            avatarFile: "bull_portrait.png",
             text: "Miguel, foco na lição antes de subir troféus de Fang! ⚔️",
             timestamp: "11:50",
             isPin: false
@@ -361,7 +622,7 @@
             id: 4,
             sender: "Papai (Admin)",
             senderRole: "👑 ADMIN",
-            avatarFile: "imagens/perfil/bull_portrait.png",
+            avatarFile: "bull_portrait.png",
             text: "Oi minha princesa Sophia! Suas lições estão lindas?",
             timestamp: "11:55",
             isPin: false
@@ -378,16 +639,30 @@
       bubble.className = "msg-bubble " + (isMe ? "sent-by-user" : "received");
 
       const headerColorClass = isMe ? "text-slate-800" : (msg.sender.includes("Papai") ? "text-yellow-400" : "text-blue-400");
+      const avatarSrc = "imagens/perfil/" + (msg.avatarFile || "penny_portrait.png");
 
-      let bodyHtml = `<p class="text-[10px] ${headerColorClass} font-brawl mb-1 uppercase flex justify-between gap-4">
-        <span>${msg.sender} <span class="text-[8px] opacity-75 font-mono">(${msg.senderRole})</span></span>
-        <span class="font-mono font-normal opacity-60">${msg.timestamp}</span>
-      </p>`;
+      let bodyHtml = `
+        <div class="flex items-start gap-2.5">
+          <div class="w-8 h-8 rounded-lg border-2 border-black overflow-hidden bg-slate-800 shrink-0 select-none">
+            <img src="${avatarSrc}" onerror="this.src='imagens/perfil/penny_portrait.png'" class="w-full h-full object-cover">
+          </div>
+          <div class="flex-grow">
+            <p class="text-[10px] ${headerColorClass} font-brawl mb-0.5 uppercase flex justify-between gap-4">
+              <span>${msg.sender} <span class="text-[8px] opacity-75 font-mono">(${msg.senderRole})</span></span>
+              <span class="font-mono font-normal opacity-60">${msg.timestamp}</span>
+            </p>
+      `;
 
       if (msg.isPin) {
-        bodyHtml += `<img src="${msg.text}" class="w-14 h-14 object-contain my-1 animate-bounce" onerror="this.src='imagens/emoj_sophia/emoji_penny_happy.png'">`;
+        bodyHtml += `
+            <img src="${msg.text}" class="w-14 h-14 object-contain my-1 animate-bounce" onerror="this.src='imagens/emoj_sophia/emoji_penny_happy.png'">
+          </div>
+        </div>`;
       } else {
-        bodyHtml += `<span>${msg.text}</span>`;
+        bodyHtml += `
+            <span class="break-words select-all">${msg.text}</span>
+          </div>
+        </div>`;
       }
 
       bubble.innerHTML = bodyHtml;
@@ -424,7 +699,7 @@
         id: Date.now(),
         sender: "Sophia",
         senderRole: "🦄 JOGADORA",
-        avatarFile: "imagens/perfil/penny_portrait.png",
+        avatarFile: playerProfile.avatar,
         text: pinPath,
         timestamp: timestampStr,
         isPin: true
@@ -453,7 +728,7 @@
         id: Date.now(),
         sender: "Sophia",
         senderRole: "🦄 JOGADORA",
-        avatarFile: "imagens/perfil/penny_portrait.png",
+        avatarFile: playerProfile.avatar,
         text: text,
         timestamp: timestampStr,
         isPin: false
@@ -478,7 +753,6 @@
       localStorage.setItem(key, JSON.stringify(msgs));
     }
 
-    // Dad auto-response simulation after 3 seconds
     function simulateDadResponse() {
       setTimeout(() => {
         const now = new Date();
@@ -487,13 +761,15 @@
         let reply = "Princesa Sophia! Você está brilhando hoje no QG! 🌸✨";
         if (currentChannel === 'Familia') {
           reply = "Isso aí! Todo mundo jogando em equipe no QG do Papai! 🛡️🏆";
+        } else if (currentChannel === 'Miguel') {
+          reply = "Estou acompanhando as táticas do Miguel aqui no painel central! 💪";
         }
 
         const incomingMsg = {
           id: Date.now(),
           sender: "Papai (Admin)",
           senderRole: "👑 ADMIN",
-          avatarFile: "imagens/perfil/bull_portrait.png",
+          avatarFile: "bull_portrait.png",
           text: reply,
           timestamp: timestampStr,
           isPin: false
@@ -507,7 +783,25 @@
         }
 
         playMsg();
-      }, 3000);
+      }, 3500);
+    }
+
+    function checkGoogleMeetLink() {
+      const savedLink = localStorage.getItem('qg_meet_link') || 'https://meet.google.com/abc-defg-hij';
+      const isMeetActive = localStorage.getItem('qg_meet_active') === 'true';
+      const indicator = document.getElementById('meet-indicator-btn');
+      
+      if (isMeetActive) {
+        indicator.href = savedLink;
+        indicator.classList.remove('hidden');
+      } else {
+        indicator.classList.add('hidden');
+      }
+    }
+
+    function logoutProfile() {
+      playClick();
+      localStorage.removeItem('qg_logged_in_sophia');
     }
   </script>
 
