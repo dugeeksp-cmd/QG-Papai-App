@@ -385,6 +385,34 @@
         progressText.innerText = "Entrando na Arena Familiar... " + percent + "%";
       }, 150);
     }
+
+    // Sistema para carregar os avatares dinamicamente caso salvos localmente
+    function loadDynamicAvatars() {
+      const brawlers = ['papai', 'miguel', 'sophia', 'convidado'];
+      brawlers.forEach(profileId => {
+        const cached = localStorage.getItem('qg_' + profileId + '_profile');
+        if (cached) {
+          try {
+            const data = JSON.parse(cached);
+            if (data && data.avatar) {
+              const imgEl = document.getElementById('avatar-' + profileId);
+              if (imgEl) {
+                let srcPath = data.avatar;
+                if (!srcPath.includes('/') && !srcPath.startsWith('imagens/')) {
+                  srcPath = 'imagens/perfil/' + srcPath;
+                }
+                imgEl.src = srcPath;
+              }
+            }
+          } catch (e) {
+            console.error('Erro ao ler perfil do ' + profileId, e);
+          }
+        }
+      });
+    }
+
+    // Registra na carga do DOM
+    window.addEventListener('DOMContentLoaded', loadDynamicAvatars);
   </script>
 
 </body>

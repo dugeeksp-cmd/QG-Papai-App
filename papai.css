@@ -5,28 +5,99 @@
 */
 
 :root {
-  --theme-primary: #FFE800;
-  --theme-secondary: #C55301;
-  --theme-dark: #111111;
-  --theme-accent: #ffd700;
-  --theme-bg-gradient: linear-gradient(135deg, #2b2b2b 0%, #111111 100%);
-  --theme-border: #ffd700;
+  --theme-papai-primary: #FFE800;
+  --theme-papai-secondary: #C55301;
+  --theme-papai-dark: #121212;
+  --theme-papai-gray: #242424;
+  --theme-papai-accent: #FFD700;
+  --theme-papai-border: #FFD700;
+  --theme-papai-gold-glow: 0 0 15px rgba(255, 215, 0, 0.45);
 }
 
-.theme-papai-container {
-  background: var(--theme-bg-gradient);
-  border: 4px solid var(--theme-border) !important;
-  box-shadow: 0 10px 0px rgba(0, 0, 0, 0.55), inset 0 0 40px rgba(255, 215, 0, 0.1) !important;
+/* Container de Tema Administrativo */
+.theme-papai {
+  background: linear-gradient(135deg, #242424 0%, #121212 100%) !important;
+  border-color: var(--theme-papai-border) !important;
+  box-shadow: 0 12px 0px rgba(0, 0, 0, 0.65), inset 0 0 40px rgba(255, 215, 0, 0.08) !important;
 }
 
+/* Cartões do painel com relevo e focado no tema Dourado e Preto */
+.papai-card-admin {
+  background-color: #1a1a1a;
+  border: 4px solid #000000;
+  border-bottom: 10px solid #000000;
+  border-radius: 20px;
+  box-shadow: 0 10px 0px rgba(0, 0, 0, 0.4);
+}
+
+/* Botão Gold exclusivo p/ Papai */
+.brawl-btn-papai-gold {
+  background: linear-gradient(to bottom, #FFE800, #B8860B);
+  border: 4px solid #000;
+  border-bottom: 8px solid #000;
+  border-radius: 16px;
+  color: #fff;
+  font-family: 'Lilita One', sans-serif;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0px #000000, 3px 3px 0px #000;
+  box-shadow: 0 4px 0px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.brawl-btn-papai-gold:hover {
+  transform: translateY(2px);
+  border-bottom-width: 6px;
+  box-shadow: 0 2px 0px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(to bottom, #FFF350, #D4AF37);
+}
+
+.brawl-btn-papai-gold:active {
+  transform: translateY(4px);
+  border-bottom-width: 4px;
+}
+
+/* Textos e Badges douradas */
 .papai-text-gold {
-  color: #ffd700;
+  color: #FFD700;
   text-shadow: 2px 2px 0px #000;
 }
 
+.papai-text-gold-gradient {
+  background: linear-gradient(to bottom, #FFFFFF 30%, #FFD700 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(2px 2px 0px #000);
+}
+
 .papai-accent-badge {
-  background-color: #ffd700;
+  background: linear-gradient(135deg, #FFD700, #B8860B);
   color: #000;
   border: 2px solid #000;
   box-shadow: 2px 2px 0px #000;
+  font-family: 'Lilita One', cursive, sans-serif;
+  text-transform: uppercase;
+}
+
+/* Glow e Animações */
+@keyframes gold-pulse-anim {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(255, 215, 0, 0.2);
+  }
+}
+
+.papai-gold-glow {
+  animation: gold-pulse-anim 2.5s infinite ease-in-out;
+}
+
+/* Abas exclusivas mais destacadas para o Papai */
+.active-familia {
+  background: linear-gradient(to bottom, #FFD700, #B8860B) !important;
+  color: #000 !important;
+  border-color: #000 !important;
+  text-shadow: none !important;
+  box-shadow: 0 -4px 0 #000 inset !important;
 }
