@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QG do Papai - Painel Miguel</title>
+  
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            // Sincroniza com as fontes estéticas de impacto
+            brawl: ['"Lilita One"', 'cursive', 'sans-serif'],
+            sansAlt: ['"Outfit"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="brawl-stripe-bg p-4 flex flex-col justify-between min-h-screen">
+
+  <!-- NOTIFICAÇÃO DE ÁUDIO OCULTA -->
+  <audio id="notificacao-sound" class="hidden" src="https://assets.mixkit.co/active_storage/sfx/2857/2857.wav" preload="auto"></audio>
+  <audio id="success-sound" class="hidden" src="https://assets.mixkit.co/active_storage/sfx/2019/2019.wav" preload="auto"></audio>
+  <audio id="error-sound" class="hidden" src="https://assets.mixkit.co/active_storage/sfx/2857/2857.wav" preload="auto"></audio>
+
+  <!-- 
+    ======================================================================
+    1. TELA DE BLOQUEIO INICIAL (OVERLAY SOBREPOSTO)
+    Teclado numérico Brawl Stars para digitação do PIN.
+    O código inclui uma verificação em javascript puro que destrava 
+    o painel principal se a senha correta "123456" for digitada.
+    ======================================================================
+  -->
+  <div id="lockscreen" class="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+    <div class="brawl-card max-w-sm w-full bg-[#222831] border-4 border-black p-6 relative">
+      
+      <!-- Cabeçalho Bloqueio -->
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center border-4 border-black shadow-[3px_3px_0_#000] mb-3 text-3xl">
+          🦈
+        </div>
+        <h3 class="text-2xl font-brawl text-white uppercase drop-shadow-[0_2px_0_#000]">
+          Entrada do Miguel
+        </h3>
+        <p class="text-xs text-slate-300 mt-1">
+          Guerreiro Azul! Insira o seu PIN familiar de 6 dígitos para destravar seu QG.
+        </p>
+      </div>
+
+      <!-- Display Visual do PIN -->
+      <div class="w-full py-3.5 bg-black rounded-xl border-4 border-black text-center mb-5">
+        <input type="password" id="pin-display" readonly placeholder="------" class="bg-transparent text-center font-brawl text-2xl text-yellow-300 tracking-[0.6em] w-full focus:outline-none placeholder:text-slate-700">
+        <p class="text-[9px] text-slate-500 font-mono mt-1">PIN REQUISITADO: 123456</p>
+      </div>
+
+      <!-- Teclado Numérico Brawl Stars  -->
+      <div class="brawl-pin-grid mb-6">
+        <button onclick="pressPin('1')" class="brawl-pin-btn">1</button>
+        <button onclick="pressPin('2')" class="brawl-pin-btn">2</button>
+        <button onclick="pressPin('3')" class="brawl-pin-btn">3</button>
+        <button onclick="pressPin('4')" class="brawl-pin-btn">4</button>
+        <button onclick="pressPin('5')" class="brawl-pin-btn">5</button>
+        <button onclick="pressPin('6')" class="brawl-pin-btn">6</button>
+        <button onclick="pressPin('7')" class="brawl-pin-btn">7</button>
+        <button onclick="pressPin('8')" class="brawl-pin-btn">8</button>
+        <button onclick="pressPin('9')" class="brawl-pin-btn">9</button>
+        <button onclick="clearPin()" class="brawl-pin-btn bg-red-700 text-sm font-brawl">LIMPAR</button>
+        <button onclick="pressPin('0')" class="brawl-pin-btn">0</button>
+        <button onclick="confirmPin()" class="brawl-pin-btn bg-green-500 font-brawl text-lg">🚀</button>
+      </div>
+
+      <div class="text-center">
+        <a href="index.html" class="text-xs text-red-400 font-bold hover:underline">Voltar à tela de perfis</a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- 
+    ======================================================================
+    2. PAINEL PRINCIPAL (ATRÁS DO BLOQUEIO)
+    Fará a exibição completa quando desbloqueado.
+    ======================================================================
+  -->
+  <div class="max-w-6xl w-full mx-auto flex flex-col gap-6">
+
+    <!-- Topo -->
+    <div class="flex justify-between items-center bg-black/60 p-4 border-2 border-black rounded-2xl">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🦈⚡</span>
+        <span class="font-brawl text-2xl tracking-wide uppercase text-blue-400 text-shadow">Sala do Miguel</span>
+      </div>
+      <a href="index.html" class="brawl-btn-red text-xs px-4 py-2 font-brawl uppercase">
+        Sair do QG 🚪
+      </a>
+    </div>
+
+    <!-- Interface Adaptada: Tema Miguel (Azul vibrante, Laranja e Amarelo) -->
+    <main class="theme-miguel bg-gradient-to-b from-[#103260] to-[#081226] border-4 border-blue-400 rounded-3xl p-6 shadow-[0_10px_0_rgba(0,0,0,0.5)]">
+      
+      <!-- Infos do Personagem -->
+      <section class="bg-black/40 border-4 border-black rounded-2xl p-4 mb-6 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="text-4xl">🦈</span>
+          <div>
+            <h3 class="text-xl font-brawl text-blue-300 uppercase tracking-wide">Miguel</h3>
+            <span class="bg-orange-500 text-black border-2 border-black font-brawl uppercase text-[10px] px-2 py-0.5 rounded-full inline-block">
+              ⚡ Guerreiro Ativo Do Clã
+            </span>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <div class="bg-black/60 border-2 border-black rounded-xl px-3 py-1 flex items-center gap-1.5 text-xs text-yellow-300 font-brawl">
+            🏆 19,420 Troféus
+          </div>
+        </div>
+      </section>
+
+      <!-- Painel de Chat Integrado -->
+      <section class="mt-6">
+        
+        <!-- Abas do Chat -->
+        <div class="brawl-tab-container select-none">
+          <button class="brawl-tab active-miguel">👪 Família</button>
+          <button class="brawl-tab">🦈 Miguel</button>
+          <button class="brawl-tab">🦄 Sophia</button>
+        </div>
+
+        <!-- Chat Box -->
+        <div class="brawl-chat-box">
+          <div class="bg-black/30 px-3 py-1.5 rounded-xl text-xs text-white/50 font-mono">
+            Canal Ativo: 🦈 CANAL DO MIGUEL (Foco em táticas)
+          </div>
+
+          <!-- Feed de Mensagens do Miguel -->
+          <div class="chat-message-list">
+            
+            <div class="msg-bubble received">
+              <p class="text-[10px] text-yellow-400 font-brawl mb-1 uppercase">Papai (Admin)</p>
+              Miguel, arrume o quarto pro Brawl hoje mais tarde! 🚀
+            </div>
+
+            <div class="msg-bubble sent-by-user">
+              <p class="text-[10px] text-black font-brawl mb-1 uppercase">Você</p>
+              Praticamente limpo, pai! Só falta organizar os brinquedos.
+            </div>
+
+          </div>
+
+          <!-- Input e Envio com áudio -->
+          <div class="flex gap-3 border-t-2 border-black pt-4">
+            <input type="text" placeholder="Responda direto no canal do Miguel..." class="flex-grow bg-slate-900 border-2 border-black rounded-xl p-3 text-white text-sm focus:outline-none focus:border-blue-400">
+            <button onclick="document.getElementById('notificacao-sound').play()" class="brawl-btn-blue font-brawl text-xs uppercase px-6 py-3 whitespace-nowrap">
+              Mandar 🚀
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <footer class="mt-8 py-4 text-center text-xs text-white/40">
+    ⚡ QG DO PAPAI • Brawl Stars Theme © 2026
+  </footer>
+
+  <!-- SCRIPT SIMPLIFICADO DE DEMONSTRAÇÃO DO PIN LOCKSCREEN -->
+  <script>
+    let typedPin = '';
+    const pinDisplay = document.getElementById('pin-display');
+    const lockBg = document.getElementById('lockscreen');
+
+    function pressPin(num) {
+      if (typedPin.length < 6) {
+        typedPin += num;
+        updateDisplay();
+      }
+    }
+
+    function clearPin() {
+      typedPin = '';
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      pinDisplay.value = typedPin;
+    }
+
+    function confirmPin() {
+      if (typedPin === '123456') {
+        // Desbloqueia
+        document.getElementById('success-sound').play();
+        lockBg.style.display = 'none';
+        alert('Sala destravada com Sucesso! Bem-vindo, Miguel! 🎉');
+      } else {
+        document.getElementById('error-sound').play();
+        typedPin = '';
+        updateDisplay();
+        alert('PIN Incorreto! Tente de novo (Hint: 123456)');
+      }
+    }
+  </script>
+
+</body>
+</html>

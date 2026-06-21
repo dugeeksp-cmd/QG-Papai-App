@@ -1,0 +1,33 @@
+# Workflow de Deploy automatizado FTP para o QG do Papai
+name: Deploy QG do Papai via FTP
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Obter código mais recente
+      uses: actions/checkout@v4
+
+    # Como o projeto do usuário aceita HTML/CSS/JS puro ou empacotado,
+    # este flow envia os arquivos do repositório de forma limpa e imediata 
+    # para a respectiva pasta do servidor FTP do usuário.
+    - name: 🚀 Sincronizar arquivos com FTP do Servidor
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: ${{ secrets.FTP_DIR }}
+        # Exclui arquivos de setup local da pipeline para otimizar o transporte
+        exclude: |
+          **/.git*
+          **/.git*/**
+          node_modules/**
+          package-lock.json

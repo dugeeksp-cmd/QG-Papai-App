@@ -1,0 +1,6 @@
+{
+  "name": "QG do Papai",
+  "description": "Um sistema familiar vibrante inspirado no design do jogo Brawl Stars com placar de jogadores, chats temáticos por abas e interfaces de controle.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

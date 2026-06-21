@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QG do Papai - Painel Administrador</title>
+  
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            brawl: ['"Lilita One"', 'cursive', 'sans-serif'],
+            sansAlt: ['"Outfit"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="brawl-stripe-bg p-4 flex flex-col justify-between min-h-screen">
+
+  <!-- AUDIO ALERTA OCULTO PARA EFEITOS SONOROS -->
+  <!-- 
+    ======================================================================
+    CONTRATO DO REQUISITO DO AUDIO:
+    Insira no atributo src abaixo o link local/remoto do efeito sonoro.
+    Deixamos um link genérico clássico de bipe do Brawl Stars como fallback.
+    ======================================================================
+  -->
+  <audio id="notificacao-sound" class="hidden" src="https://assets.mixkit.co/active_storage/sfx/2857/2857.wav" preload="auto"></audio>
+
+  <div class="max-w-6xl w-full mx-auto flex flex-col gap-6">
+
+    <!-- BARRA SUPERIOR DE APOIO -->
+    <div class="flex justify-between items-center bg-black/60 p-4 border-2 border-black rounded-2xl">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">👑</span>
+        <span class="font-brawl text-2xl tracking-wide uppercase text-yellow-500 text-shadow">Painel Admin</span>
+      </div>
+      <a href="index.html" class="brawl-btn-red text-xs px-4 py-2 font-brawl uppercase">
+        Voltar Ao Lobby 🚪
+      </a>
+    </div>
+
+    <!-- TELA CENTRAL COMPONENTIZADA: TEMA PAPAI (Dourado/Preto) -->
+    <main class="theme-papai bg-gradient-to-b from-[#1c1c1c] to-[#121212] border-4 border-amber-500 rounded-3xl p-6 shadow-[0_10px_0_rgba(0,0,0,0.5)]">
+      
+      <!-- Topo: Painel Administrativo de Ações (Salvar Link e Ativar Meet) -->
+      <section class="bg-black/50 border-4 border-black rounded-2xl p-5 mb-6">
+        <h3 class="text-lg font-brawl text-yellow-400 uppercase mb-4 flex items-center gap-2">
+          ⚡ CONTROLE DE COMUNICAÇÃO DE FAMÍLIA
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+          
+          <!-- Botão Ação 1: Salvar Link -->
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-bold text-slate-300">Link da Sala Familiar (Google Meet etc.):</label>
+            <div class="flex gap-2">
+              <input type="url" value="https://meet.google.com/abc-defg-hij" class="bg-slate-900 border-2 border-black rounded-xl p-2 text-white text-sm flex-grow font-mono focus:outline-none focus:border-yellow-400">
+              <button onclick="document.getElementById('notificacao-sound').play()" class="brawl-btn-yellow font-brawl text-xs uppercase px-4 py-2 whitespace-nowrap">
+                Salvar Link
+              </button>
+            </div>
+          </div>
+
+          <!-- Botão Ação 2: Ativar Meet (Ação Estilo botão "Criar Sala") -->
+          <div class="flex flex-col gap-2">
+            <span class="text-xs font-bold text-slate-300">Ação Rápida de Transmissão:</span>
+            <button onclick="this.classList.toggle('opacity-50'); document.getElementById('notificacao-sound').play(); alert('Meet Familiar ativado e projetado para as crianças!')" class="brawl-btn-green w-full font-brawl py-2.5 text-xs text-center uppercase tracking-wider">
+              🎮 ATIVAR MEET NO QG
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Centro: Área de Gerenciamento de Usuários (Miguel e Sophia) e Temas por cores -->
+      <section class="bg-black/40 border-4 border-black rounded-2xl p-5 mb-6">
+        <h3 class="text-lg font-brawl text-cyan-400 uppercase mb-4">
+          👥 GERENCIAMENTO DOS GUERREIROS DO CLÃ
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Bloco Miguel -->
+          <div class="bg-slate-950 border-2 border-blue-500/30 rounded-xl p-4 flex flex-col justify-between gap-3 relative">
+            <div class="absolute top-2 right-2 bg-blue-600/50 border border-blue-400 font-brawl text-[10px] uppercase px-2 py-0.5 rounded text-white">
+              Tema Azul
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <span class="text-3xl bg-blue-900/50 p-2 rounded-xl">🦈</span>
+              <div>
+                <h4 class="text-base font-brawl text-blue-400 uppercase">MIGUEL</h4>
+                <p class="text-xs text-slate-400">Seção Ativa - Passcode: <span class="font-bold text-yellow-400">123456</span></p>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3">
+              <span class="text-xs text-slate-400 block mb-1.5 font-bold">Variáveis de Cores Ativas (Tema Miguel):</span>
+              <div class="flex items-center gap-1.5">
+                <span class="inline-block w-4.5 h-4.5 bg-blue-500 rounded-full border border-black"></span>
+                <span class="inline-block w-4.5 h-4.5 bg-orange-500 rounded-full border border-black"></span>
+                <span class="inline-block w-4.5 h-4.5 bg-yellow-400 rounded-full border border-black"></span>
+                <span class="text-xs font-mono text-slate-400 ml-1">Azul, Laranja e Amarelo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloco Sophia -->
+          <div class="bg-slate-950 border-2 border-pink-500/30 rounded-xl p-4 flex flex-col justify-between gap-3 relative">
+            <div class="absolute top-2 right-2 bg-pink-600/50 border border-pink-400 font-brawl text-[10px] uppercase px-2 py-0.5 rounded text-white">
+              Tema Rosa
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <span class="text-3xl bg-pink-900/50 p-2 rounded-xl">🌸</span>
+              <div>
+                <h4 class="text-base font-brawl text-pink-400 uppercase">SOPHIA</h4>
+                <p class="text-xs text-slate-400">Seção Ativa - Passcode: <span class="font-bold text-yellow-400">654321</span></p>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3">
+              <span class="text-xs text-slate-400 block mb-1.5 font-bold">Variáveis de Cores Ativas (Tema Sophia):</span>
+              <div class="flex items-center gap-1.5">
+                <span class="inline-block w-4.5 h-4.5 bg-pink-500 rounded-full border border-black"></span>
+                <span class="inline-block w-4.5 h-4.5 bg-purple-500 rounded-full border border-black"></span>
+                <span class="inline-block w-4.5 h-4.5 bg-fuchsia-400 rounded-full border border-black"></span>
+                <span class="text-xs font-mono text-slate-400 ml-1">Rosa, Lilás e Roxo</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Parte Inferior: Chat com abas horizontais de fácil navegação -->
+      <section class="mt-6">
+        
+        <!-- Abas do Chat -->
+        <div class="brawl-tab-container select-none">
+          <button class="brawl-tab active-familia">👪 Família</button>
+          <button class="brawl-tab">🦈 Miguel</button>
+          <button class="brawl-tab">🦄 Sophia</button>
+        </div>
+
+        <!-- Conteúdo do Chat Box -->
+        <div class="brawl-chat-box">
+          <div class="bg-black/30 px-3 py-1.5 rounded-xl text-xs text-white/50 font-mono">
+            Canal Ativo: 🌍 FAMÍLIA (Todas as frentes integradas)
+          </div>
+
+          <!-- Feed de Mensagens Simulado -->
+          <div class="chat-message-list">
+            
+            <div class="msg-bubble received">
+              <p class="text-[10px] text-yellow-400 font-brawl mb-1 uppercase">Papai (Admin)</p>
+              Sejam bem-vindos ao clã oficial familiares! 🚀
+            </div>
+
+            <div class="msg-bubble received">
+              <p class="text-[10px] text-blue-400 font-brawl mb-1 uppercase">Miguel</p>
+              Estou quase terminando de arrumar o quarto, pai! 🦈
+            </div>
+
+            <div class="msg-bubble sent-by-user">
+              <p class="text-[10px] text-black font-brawl mb-1 uppercase">Você (Admin)</p>
+              Excelente. Já vou preparar os troféus!
+            </div>
+
+          </div>
+
+          <!-- Input e Envio com som -->
+          <div class="flex gap-3 border-t-2 border-black pt-4">
+            <input type="text" placeholder="Escreva uma mensagem de comando..." class="flex-grow bg-slate-900 border-2 border-black rounded-xl p-3 text-white text-sm focus:outline-none focus:border-yellow-400">
+            <button onclick="document.getElementById('notificacao-sound').play()" class="brawl-btn-yellow font-brawl text-xs uppercase px-6 py-3 whitespace-nowrap">
+              Mandar 🚀
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+</body>
+</html>
