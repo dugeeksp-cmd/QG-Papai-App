@@ -154,7 +154,7 @@
         <div class="brawl-chat-box relative">
           <div class="bg-black/30 px-3 py-1.5 rounded-xl text-xs text-yellow-300 font-mono flex justify-between items-center">
             <span>Canal Ativo: <strong id="channel-name-title">👪 FAMÍLIA (Todas as frentes integradas)</strong></span>
-            <button onclick="clearChatHistory()" class="text-red-400 hover:text-red-300 uppercase text-[9px] font-brawl bg-black/60 px-2 py-0.5 rounded border border-red-500/30">Limpar Histórico</button>
+            <button id="clear-chat-btn" onclick="clearChatHistory()" class="text-red-400 hover:text-red-300 uppercase text-[9px] font-brawl bg-black/60 px-2 py-0.5 rounded border border-red-500/30">Limpar Histórico</button>
           </div>
 
           <!-- Feed de Mensagens Simulado -->
@@ -188,13 +188,13 @@
 
             <div class="flex gap-2">
               <!-- Botão p/ abrir pins -->
-              <button onclick="toggleEmojiDrawer()" class="brawl-btn-yellow font-brawl text-2xl uppercase px-4 whitespace-nowrap flex items-center justify-center">
+              <button id="emoji-drawer-toggle-btn" onclick="toggleEmojiDrawer()" class="brawl-btn-yellow font-brawl text-2xl uppercase px-4 whitespace-nowrap flex items-center justify-center">
                 ☺
               </button>
               
               <input type="text" id="chat-input" placeholder="Escreva uma mensagem de comando..." class="flex-grow bg-slate-900 border-2 border-black rounded-xl p-3 text-white text-sm focus:outline-none focus:border-yellow-400 font-semibold" onkeydown="handleKeyDown(event)">
               
-              <button onclick="sendMessage()" class="brawl-btn-yellow font-brawl text-xs uppercase px-6 py-3 whitespace-nowrap">
+              <button id="chat-send-btn" onclick="sendMessage()" class="brawl-btn-yellow font-brawl text-xs uppercase px-6 py-3 whitespace-nowrap">
                 Mandar 🚀
               </button>
             </div>
@@ -242,7 +242,7 @@
         meetBtn.className = "brawl-btn-red w-full font-brawl py-2.5 text-xs text-center uppercase tracking-wider";
       }
 
-      loadChat();
+      initChat();
     });
 
     function saveMeetLink() {
@@ -300,23 +300,12 @@
         channelTitle.innerText = "🦄 CANAL DA SOPHIA (Brilho e Missões)";
       }
 
-      loadChat();
+      document.getElementById('chat-feed').innerHTML = '';
     }
 
-    function getChatKey() {
-      return 'qg_papai_chat_messages_' + currentChannel;
-    }
-
-    function loadChat() {
-      const feed = document.getElementById('chat-feed');
-      feed.innerHTML = '';
-      
-      const key = getChatKey();
-      const savedMessages = JSON.parse(localStorage.getItem(key)) || getDefaultMessages();
-      
-      savedMessages.forEach(msg => {
-        appendMessageUI(msg);
-      });
+    function initChat() {
+      // O container de mensagens inicia totalmente limpo
+      document.getElementById('chat-feed').innerHTML = '';
       scrollToBottom();
     }
 
@@ -325,73 +314,44 @@
       feed.scrollTop = feed.scrollHeight;
     }
 
-    function getDefaultMessages() {
-      if (currentChannel === 'Familia') {
-        return [
-          {
-            id: 1,
-            sender: "Papai (Admin)",
-            senderRole: "👑 ADMIN",
-            avatarFile: "imagens/perfil/bull_portrait.png",
-            text: "Sejam bem-vindos ao clã oficial familiar! 🚀 Todas as missões do dia estão de pé!",
-            timestamp: "12:00",
-            isPin: false
-          },
-          {
-            id: 2,
-            sender: "Miguel",
-            senderRole: "⚡ JOGADOR",
-            avatarFile: "imagens/perfil/fang_portrait.png",
-            text: "Estou jogando e terminando de organizar a estante, pai! 🦈",
-            timestamp: "12:01",
-            isPin: false
-          }
-        ];
-      } else if (currentChannel === 'Miguel') {
-        return [
-          {
-            id: 3,
-            sender: "Papai (Admin)",
-            senderRole: "👑 ADMIN",
-            avatarFile: "imagens/perfil/bull_portrait.png",
-            text: "Miguel, foco na lição antes de subir troféus de Fang! ⚔️",
-            timestamp: "11:50",
-            isPin: false
-          }
-        ];
-      } else {
-        return [
-          {
-            id: 4,
-            sender: "Papai (Admin)",
-            senderRole: "👑 ADMIN",
-            avatarFile: "imagens/perfil/bull_portrait.png",
-            text: "Oi minha princesa Sophia! Suas lições estão lindas?",
-            timestamp: "11:55",
-            isPin: false
-          }
-        ];
-      }
-    }
-
     function appendMessageUI(msg) {
       const feed = document.getElementById('chat-feed');
       const bubble = document.createElement('div');
       
-      const isMe = msg.sender.includes("Papai") || msg.sender.includes("Você");
+      const isMe = msg.sender.includes("Papai") || msg.sender.includes("Você") || msg.sender.includes("Admin");
       bubble.className = "msg-bubble " + (isMe ? "sent-by-user" : "received");
 
       const headerColorClass = isMe ? "text-slate-800" : (msg.sender.includes("Miguel") ? "text-cyan-400" : "text-pink-400");
-      
-      let bodyHtml = `<p class="text-[10px] ${headerColorClass} font-brawl mb-1 uppercase flex justify-between gap-4">
-        <span>${msg.sender} <span class="text-[8px] opacity-75 font-mono">(${msg.senderRole})</span></span>
-        <span class="font-mono font-normal opacity-60">${msg.timestamp}</span>
-      </p>`;
+      const avatarSrc = msg.avatarFile ? (msg.avatarFile.startsWith("imagens/") ? msg.avatarFile : "imagens/perfil/" + msg.avatarFile) : "imagens/perfil/bull_portrait.png";
+
+      let bodyHtml = `
+        <div class="msg-wrapper">
+          <div class="msg-avatar-container">
+            <img src="${avatarSrc}" class="msg-avatar" onerror="this.src='imagens/perfil/bull_portrait.png'">
+          </div>
+          <div class="msg-content-container">
+            <p class="msg-header ${headerColorClass}">
+              <span class="msg-sender">${msg.sender} <span class="msg-role">(${msg.senderRole})</span></span>
+              <span class="msg-time">${msg.timestamp}</span>
+            </p>
+      `;
 
       if (msg.isPin) {
-        bodyHtml += `<img src="${msg.text}" class="w-14 h-14 object-contain my-1 animate-bounce" onerror="this.src='imagens/emoj_papai/ts_alien_pin.png'">`;
+        bodyHtml += `
+            <div class="msg-body msg-pin">
+              <img src="${msg.text}" alt="pin" class="pin-img animate-bounce" onerror="this.src='imagens/emoj_papai/ts_alien_pin.png'">
+            </div>
+          </div>
+        </div>
+        `;
       } else {
-        bodyHtml += `<span>${msg.text}</span>`;
+        bodyHtml += `
+            <div class="msg-body text-content">
+              <span>${msg.text}</span>
+            </div>
+          </div>
+        </div>
+        `;
       }
 
       bubble.innerHTML = bodyHtml;
@@ -399,7 +359,7 @@
     }
 
     function handleKeyDown(event) {
-      if (key === 'Enter' || event.keyCode === 13) {
+      if (event.key === 'Enter' || event.keyCode === 13) {
         sendMessage();
       }
     }
@@ -435,13 +395,12 @@
         isPin: true
       };
 
-      saveMessageToLocal(newMsg);
       appendMessageUI(newMsg);
       scrollToBottom();
       playMsg();
 
-      // Desencadeia simulação de resposta
-      simulateResponse();
+      // [INTEGRAÇÃO FIREBASE FUTURA]: Salvar em tempo real no Firestore
+      console.log("Firebase PIN send trigger:", newMsg);
     }
 
     function sendMessage() {
@@ -464,7 +423,6 @@
         isPin: false
       };
 
-      saveMessageToLocal(newMsg);
       appendMessageUI(newMsg);
       scrollToBottom();
 
@@ -472,8 +430,8 @@
       input.focus();
       playMsg();
 
-      // Desencadeia simulação de resposta
-      simulateResponse();
+      // [INTEGRAÇÃO FIREBASE FUTURA]: Salvar em tempo real no Firestore
+      console.log("Firebase Message send trigger:", newMsg);
     }
 
     function addSystemMessage(text) {
@@ -490,88 +448,19 @@
         isPin: false
       };
 
-      saveMessageToLocal(newMsg);
       appendMessageUI(newMsg);
       scrollToBottom();
       playMsg();
     }
 
-    function saveMessageToLocal(msg) {
-      const key = getChatKey();
-      const msgs = JSON.parse(localStorage.getItem(key)) || getDefaultMessages();
-      msgs.push(msg);
-      localStorage.setItem(key, JSON.stringify(msgs));
-    }
-
     function clearChatHistory() {
       playClick();
       if (confirm("Quer mesmo limpar o histórico desse canal?")) {
-        const key = getChatKey();
-        localStorage.removeItem(key);
-        loadChat();
+        document.getElementById('chat-feed').innerHTML = '';
         playMsg();
+        // [INTEGRAÇÃO FIREBASE FUTURA]: Executar exclusão da coleção no Firestore
+        console.log("Firebase clear triggers for active collection");
       }
-    }
-
-    // Resposta Simulada dos filhos dependendo de qual canal está ativo
-    function simulateResponse() {
-      setTimeout(() => {
-        const now = new Date();
-        const timestampStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-
-        let responderName = "Miguel";
-        let responderRole = "⚡ JOGADOR";
-        let avatar = "imagens/perfil/fang_portrait.png";
-        let responseTxt = "Entendido, Papai! Estou ligado! 👀⚔️";
-        let isPin = false;
-
-        if (currentChannel === 'Familia') {
-          // Resposta randômica de algum dos dois
-          const rand = Math.random() > 0.5;
-          if (rand) {
-            responderName = "Miguel";
-            responderRole = "⚡ JOGADOR";
-            avatar = "imagens/perfil/fang_portrait.png";
-            responseTxt = "imagens/emoj_miguel/fang_happy_pin.png";
-            isPin = true;
-          } else {
-            responderName = "Sophia";
-            responderRole = "🦄 JOGADORA";
-            avatar = "imagens/perfil/penny_portrait.png";
-            responseTxt = "Sim, papai! Tudo pronto para brilhar no QG! 🌸✨";
-          }
-        } else if (currentChannel === 'Miguel') {
-          responderName = "Miguel";
-          responderRole = "⚡ JOGADOR";
-          avatar = "imagens/perfil/fang_portrait.png";
-          responseTxt = "Entendido, Papai! Missão dada é missão cumprida! Vou arrumar a estante agora. 🏆";
-        } else {
-          responderName = "Sophia";
-          responderRole = "🦄 JOGADORA";
-          avatar = "imagens/perfil/penny_portrait.png";
-          responseTxt = "Sim, Papai! Já terminei tudo e fiz com carinho! 🦄🍬 Posso ganhar troféus?";
-        }
-
-        const incomingMsg = {
-          id: Date.now(),
-          sender: responderName,
-          senderRole: responderRole,
-          avatarFile: avatar,
-          text: responseTxt,
-          timestamp: timestampStr,
-          isPin: isPin
-        };
-
-        saveMessageToLocal(incomingMsg);
-        
-        // Renderiza apenas se ainda estiver no mesmo canal
-        if (getChatKey() === 'qg_papai_chat_messages_' + currentChannel) {
-          appendMessageUI(incomingMsg);
-          scrollToBottom();
-        }
-
-        playMsg();
-      }, 3000);
     }
   </script>
 

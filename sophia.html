@@ -177,7 +177,7 @@
         <div class="lg:col-span-7 flex flex-col gap-3">
           
           <!-- Botão de Destaque CHAMAR PAPAI -->
-          <button onclick="chamarPapai()" class="w-full bg-red-600 hover:bg-red-500 active:scale-[0.98] border-4 border-black text-white font-brawl tracking-wider uppercase text-base sm:text-lg py-3 rounded-2xl shadow-[4px_4px_0_#000] transition-all flex items-center justify-center gap-2 select-none shrink-0 font-brawl">
+          <button id="chamar-papai-btn" onclick="chamarPapai()" class="w-full bg-red-600 hover:bg-red-500 active:scale-[0.98] border-4 border-black text-white font-brawl tracking-wider uppercase text-base sm:text-lg py-3 rounded-2xl shadow-[4px_4px_0_#000] transition-all flex items-center justify-center gap-2 select-none shrink-0 font-brawl">
             🚨 CHAMAR PAPAI 🚨
           </button>
           
@@ -234,13 +234,13 @@
 
               <!-- Linha de Input -->
               <div class="flex gap-2">
-                <button onclick="toggleEmojiDrawer()" class="brawl-btn-yellow font-brawl text-xl uppercase px-3.5 whitespace-nowrap flex items-center justify-center">
+                <button id="emoji-drawer-toggle-btn" onclick="toggleEmojiDrawer()" class="brawl-btn-yellow font-brawl text-xl uppercase px-3.5 whitespace-nowrap flex items-center justify-center">
                   ☺
                 </button>
                 
                 <input type="text" id="chat-input" placeholder="Responda direto no canal da Sophia..." class="flex-grow bg-slate-900 border-2 border-black rounded-xl p-2.5 text-white text-sm focus:outline-none focus:border-pink-400 font-semibold" onkeydown="handleKeyDown(event)">
                 
-                <button onclick="sendMessage()" class="brawl-btn-pink-vibrant font-brawl text-xs uppercase px-4 py-3 whitespace-nowrap">
+                <button id="chat-send-btn" onclick="sendMessage()" class="brawl-btn-pink-vibrant font-brawl text-xs uppercase px-4 py-3 whitespace-nowrap">
                   Mandar 🚀
                 </button>
               </div>
@@ -452,8 +452,8 @@
       // Aplicar Configurações no Layout do Battle Card
       applyProfileChanges();
 
-      // Carregar mensagens canal ativo
-      loadChat();
+      // Inicializar chat dinâmico integrado
+      initChat();
     }
 
     // Gerador de Avatares da pasta imagens/perfil/
@@ -576,78 +576,18 @@
         title.innerText = "🦄 CANAL DA SOPHIA (Brilho e Missões)";
       }
 
-      loadChat();
+      document.getElementById('chat-feed').innerHTML = '';
     }
 
-    function getChatKey() {
-      return 'qg_papai_chat_messages_' + currentChannel;
-    }
-
-    function loadChat() {
-      const feed = document.getElementById('chat-feed');
-      feed.innerHTML = '';
-
-      const key = getChatKey();
-      const savedMessages = JSON.parse(localStorage.getItem(key)) || getDefaultMessages();
-
-      savedMessages.forEach(msg => {
-        appendMessageUI(msg);
-      });
+    function initChat() {
+      // O container de mensagens inicia totalmente limpado
+      document.getElementById('chat-feed').innerHTML = '';
       scrollToBottom();
     }
 
     function scrollToBottom() {
       const feed = document.getElementById('chat-feed');
       feed.scrollTop = feed.scrollHeight;
-    }
-
-    function getDefaultMessages() {
-      if (currentChannel === 'Familia') {
-        return [
-          {
-            id: 1,
-            sender: "Papai (Admin)",
-            senderRole: "👑 ADMIN",
-            avatarFile: "bull_portrait.png",
-            text: "Sejam bem-vindos ao clã oficial familiar! 🚀 Todas as missões do dia estão de pé!",
-            timestamp: "12:00",
-            isPin: false
-          },
-          {
-            id: 2,
-            sender: "Miguel",
-            senderRole: "⚡ JOGADOR",
-            avatarFile: "fang_portrait.png",
-            text: "Estou jogando e terminando de organizar a estante, pai! 🦈",
-            timestamp: "12:01",
-            isPin: false
-          }
-        ];
-      } else if (currentChannel === 'Miguel') {
-        return [
-          {
-            id: 3,
-            sender: "Papai (Admin)",
-            senderRole: "👑 ADMIN",
-            avatarFile: "bull_portrait.png",
-            text: "Miguel, foco na lição antes de subir troféus de Fang! ⚔️",
-            timestamp: "11:50",
-            isPin: false
-          }
-        ];
-      } else {
-        return [
-          {
-            id: 4,
-            sender: "Papai (Admin)",
-            senderRole: "👑 ADMIN",
-            avatarFile: "bull_portrait.png",
-            text: "Oi minha princesa Sophia! Suas lições estão lindas?",
-            timestamp: "11:55",
-            isPin: false
-          }
-        ];
-      }
     }
 
     function appendMessageUI(msg) {
@@ -658,30 +598,36 @@
       bubble.className = "msg-bubble " + (isMe ? "sent-by-user" : "received");
 
       const headerColorClass = isMe ? "text-slate-800" : (msg.sender.includes("Papai") ? "text-yellow-400" : "text-blue-400");
-      const avatarSrc = "imagens/perfil/" + (msg.avatarFile || "penny_portrait.png");
+      const avatarSrc = msg.avatarFile ? (msg.avatarFile.startsWith("imagens/") ? msg.avatarFile : "imagens/perfil/" + msg.avatarFile) : "imagens/perfil/penny_portrait.png";
 
       let bodyHtml = `
-        <div class="flex items-start gap-2.5">
-          <div class="w-8 h-8 rounded-lg border-2 border-black overflow-hidden bg-slate-800 shrink-0 select-none">
-            <img src="${avatarSrc}" onerror="this.src='imagens/perfil/penny_portrait.png'" class="w-full h-full object-cover">
+        <div class="msg-wrapper">
+          <div class="msg-avatar-container">
+            <img src="${avatarSrc}" class="msg-avatar" onerror="this.src='imagens/perfil/penny_portrait.png'">
           </div>
-          <div class="flex-grow">
-            <p class="text-[10px] ${headerColorClass} font-brawl mb-0.5 uppercase flex justify-between gap-4">
-              <span>${msg.sender} <span class="text-[8px] opacity-75 font-mono">(${msg.senderRole})</span></span>
-              <span class="font-mono font-normal opacity-60">${msg.timestamp}</span>
+          <div class="msg-content-container">
+            <p class="msg-header ${headerColorClass}">
+              <span class="msg-sender">${msg.sender} <span class="msg-role">(${msg.senderRole})</span></span>
+              <span class="msg-time">${msg.timestamp}</span>
             </p>
       `;
 
       if (msg.isPin) {
         bodyHtml += `
-            <img src="${msg.text}" class="w-14 h-14 object-contain my-1 animate-bounce" onerror="this.src='imagens/emoj_sophia/emoji_penny_happy.png'">
+            <div class="msg-body msg-pin">
+              <img src="${msg.text}" alt="pin" class="pin-img animate-bounce" onerror="this.src='imagens/emoj_sophia/emoji_penny_happy.png'">
+            </div>
           </div>
-        </div>`;
+        </div>
+        `;
       } else {
         bodyHtml += `
-            <span class="break-words select-all">${msg.text}</span>
+            <div class="msg-body text-content">
+              <span>${msg.text}</span>
+            </div>
           </div>
-        </div>`;
+        </div>
+        `;
       }
 
       bubble.innerHTML = bodyHtml;
@@ -724,13 +670,12 @@
         isPin: true
       };
 
-      saveMessageToLocal(newMsg);
       appendMessageUI(newMsg);
       scrollToBottom();
       playMsg();
 
-      // Desencadeia simulação de resposta do Papai
-      simulateDadResponse();
+      // [INTEGRAÇÃO FIREBASE FUTURA]: Salvar em tempo real no Firestore
+      console.log("Firebase trigger pin:", newMsg);
     }
 
     function sendMessage() {
@@ -753,7 +698,6 @@
         isPin: false
       };
 
-      saveMessageToLocal(newMsg);
       appendMessageUI(newMsg);
       scrollToBottom();
 
@@ -761,57 +705,19 @@
       input.focus();
       playMsg();
 
-      // Desencadeia simulação de resposta do Papai
-      simulateDadResponse();
-    }
-
-    function saveMessageToLocal(msg) {
-      const key = getChatKey();
-      const msgs = JSON.parse(localStorage.getItem(key)) || getDefaultMessages();
-      msgs.push(msg);
-      localStorage.setItem(key, JSON.stringify(msgs));
-    }
-
-    function simulateDadResponse() {
-      setTimeout(() => {
-        const now = new Date();
-        const timestampStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-
-        let reply = "Princesa Sophia! Você está brilhando hoje no QG! 🌸✨";
-        if (currentChannel === 'Familia') {
-          reply = "Isso aí! Todo mundo jogando em equipe no QG do Papai! 🛡️🏆";
-        } else if (currentChannel === 'Miguel') {
-          reply = "Estou acompanhando as táticas do Miguel aqui no painel central! 💪";
-        }
-
-        const incomingMsg = {
-          id: Date.now(),
-          sender: "Papai (Admin)",
-          senderRole: "👑 ADMIN",
-          avatarFile: "bull_portrait.png",
-          text: reply,
-          timestamp: timestampStr,
-          isPin: false
-        };
-
-        saveMessageToLocal(incomingMsg);
-
-        if (getChatKey() === 'qg_papai_chat_messages_' + currentChannel) {
-          appendMessageUI(incomingMsg);
-          scrollToBottom();
-        }
-
-        playMsg();
-      }, 3500);
+      // [INTEGRAÇÃO FIREBASE FUTURA]: Salvar em tempo real no Firestore
+      console.log("Firebase trigger message:", newMsg);
     }
 
     // Controle de Exibição / Ocultação do Modal de Opções
+    // Exibindo em flex ou hidden para compatibilidade móvel
     function openOptionsModal() {
       playClick();
       document.getElementById('options-modal').classList.remove('hidden');
       document.getElementById('options-modal').classList.add('flex');
     }
 
+    // Ocultando
     function closeOptionsModal() {
       playClick();
       document.getElementById('options-modal').classList.add('hidden');
@@ -819,13 +725,10 @@
     }
 
     // Engenharia do Botão "Chamar Papai" - Sophia Theme
-    // [INTEGRAÇÃO FIREBASE FUTURA]: Ao clicar, mudar o status de 'chamado_papai' para true no Firestore
-    // para fazer a tela do administrador piscar e tocar o som de alerta.
-    // Ex: database.collection('papai_alertas').doc('chamado').set({ chamado_papai: true, timestamp: Date.now() });
     function chamarPapai() {
       playClick();
       
-      // Registra temporariamente em localStorage para que o administrador possa ler
+      // Registra temporariamente em localStorage para que o administrador possa ler até integrar Firebase
       localStorage.setItem('qg_chamado_papai', 'true');
       
       const now = new Date();
@@ -841,17 +744,12 @@
         isPin: false
       };
 
-      saveMessageToLocal(chamarMsg);
       appendMessageUI(chamarMsg);
       scrollToBottom();
-      
-      // som de feedback para a criança
       playMsg();
     }
 
     // Sincronizador de link do Google Meet
-    // [INTEGRAÇÃO FIREBASE FUTURA]: Se meet_ativo == true, exibe botão de forma dinâmica lendo do firestore.
-    // Ex: firestore.collection('config').doc('meet').onSnapshot(doc => { ... })
     function checkGoogleMeetLink() {
       const savedLink = localStorage.getItem('qg_meet_link') || 'https://meet.google.com/abc-defg-hij';
       const isMeetActive = localStorage.getItem('qg_meet_active') === 'true';
