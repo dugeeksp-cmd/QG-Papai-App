@@ -493,3 +493,33 @@ body {
   animation: pulse 1.5s infinite ease-in-out;
 }
 
+/* ==========================================================================
+   AJUSTES FINOS DE RESPONSIVIDADE - VERSÃO 2.2
+   ========================================================================== */
+
+/* Ampliação dinâmica e segura do Logotipo do Lobby */
+.lobby-logo-enlarged {
+  height: 11vh !important;
+  max-height: 96px !important;
+  min-height: 52px !important;
+  width: auto !important;
+  object-fit: contain;
+}
+
+/* Forçar respiro sutil de segurança para bordas de tela em iPhones/Androids */
+.screen-respiro-container {
+  padding-left: clamp(12px, 3vw, 28px) !important;
+  padding-right: clamp(12px, 3vw, 28px) !important;
+  padding-top: clamp(10px, 2.5vh, 24px) !important;
+  padding-bottom: clamp(10px, 2.5vh, 24px) !important;
+}
+
+/* Garantia estrita de zero rolagem vertical na página de perfis */
+.no-scroll-body {
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-height: 100vh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+}
+

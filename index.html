@@ -9,7 +9,7 @@
   <title>QG do Papai - Seleção de Perfil</title>
   
   <!-- Estilos Mãe separados de Brawl Stars -->
-  <link rel="stylesheet" href="style.css?v=2.1">
+  <link rel="stylesheet" href="style.css?v=2.2">
   
   <!-- CSS Auxiliar Tailwind (CDN) para facilitar flexibilidade de layout responsivo rápido -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -26,23 +26,23 @@
     }
   </script>
 </head>
-<body class="brawl-stripe-bg h-screen h-[100dvh] max-h-screen max-h-[100dvh] overflow-hidden flex flex-col justify-between select-none">
+<body class="brawl-stripe-bg no-scroll-body screen-respiro-container flex flex-col justify-between select-none gap-3.5">
 
   <!-- Efeitos Sonoros Reais sem barra inicial -->
   <audio id="audio-click" src="sons/menu_click_01.ogg" preload="auto"></audio>
   <audio id="audio-login" src="sons/load_login.ogg" preload="auto"></audio>
 
   <!-- TOPO: Cabeçalho com espaço planejado e reservado para logo-qg.png -->
-  <header class="py-2 px-3 md:py-3 md:px-4 bg-black/60 border-b-4 border-black z-10 flex-shrink-0">
+  <header class="py-2.5 px-4 bg-black/65 border-4 border-black rounded-2xl z-10 flex-shrink-0 shadow-[4px_4px_0_#000]">
     <div class="max-w-6xl mx-auto flex flex-row items-center justify-between gap-2">
       
       <div class="flex items-center">
         <!-- Logo Horizontal QG do Papai -->
-        <img src="imagens/ui/logo_hori.png" alt="QG do Papai" class="h-10 md:h-14 max-w-[180px] md:max-w-[240px] object-contain select-none pointer-events-none filter drop-shadow-[0_2px_0_#000]" onerror="this.src='https://placehold.co/240x50/1e052c/ffffff?text=QG+DO+PAPAI&font=Lilita+One';">
+        <img src="imagens/ui/logo_hori.png" alt="QG do Papai" class="lobby-logo-enlarged select-none pointer-events-none filter drop-shadow-[0_2px_0_#000]" onerror="this.src='https://placehold.co/240x50/1e052c/ffffff?text=QG+DO+PAPAI&font=Lilita+One';">
       </div>
 
       <!-- Placa de Atividades -->
-      <div class="bg-amber-500 text-black px-3 py-1 rounded-full border-2 md:border-4 border-black font-brawl uppercase text-[10px] md:text-xs shadow-[1.5px_1.5px_0_#000] tracking-wide flex-shrink-0">
+      <div class="bg-amber-500 text-black px-3.5 py-1 rounded-full border-4 border-black font-brawl uppercase text-[10px] md:text-xs shadow-[2px_2px_0_#000] tracking-wide flex-shrink-0">
         Lobby Principal 👑
       </div>
 
@@ -207,7 +207,7 @@
   </div>
 
   <!-- MONITOR DE STATUS NO PLACAR -->
-  <footer class="bg-slate-900 border-t-4 border-black py-2 px-3 md:py-3 md:px-4 flex-shrink-0">
+  <footer class="bg-slate-900 border-4 border-black rounded-2xl py-2 px-3 md:py-3 md:px-5 flex-shrink-0 shadow-[4px_4px_0_#000]">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 mb-2">
       
       <div class="hidden md:flex items-center gap-2">
@@ -265,7 +265,7 @@
     <div class="border-t border-slate-800/65 pt-2 flex items-center justify-between gap-2 flex-shrink-0">
       <img src="imagens/ui/logo_vert.png" alt="QG do Papai" class="h-6 md:h-10 object-contain select-none pointer-events-none" onerror="this.onerror=null; this.src='https://placehold.co/100x30/1e052c/ffffff?text=QG+DO+PAPAI&font=Lilita+One';">
       <div class="text-[8px] md:text-xs text-white/40 font-sansAlt font-semibold tracking-wider text-right">
-        ⚡ QG DO PAPAI • Brawl Stars Theme © 2026 • Versão: 2.1
+        ⚡ QG DO PAPAI • Brawl Stars Theme © 2026 • Versão: 2.2
       </div>
     </div>
   </footer>
