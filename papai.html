@@ -216,7 +216,7 @@
     const clickSound = document.getElementById('audio-click');
     const msgSound = document.getElementById('audio-msg');
 
-    let currentChannel = 'Familia'; // 'Familia' | 'Miguel' | 'Sophia'
+    window.currentChannel = 'Familia'; // 'Familia' | 'Miguel' | 'Sophia'
 
     function playClick() {
       clickSound.currentTime = 0;
@@ -277,7 +277,7 @@
     // Gerenciador de Chat por Canal
     function switchTab(channelId) {
       playClick();
-      currentChannel = channelId;
+      window.currentChannel = channelId;
 
       const tabs = ['Familia', 'Miguel', 'Sophia'];
       tabs.forEach(tab => {

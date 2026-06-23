@@ -38,7 +38,7 @@ if (isFirebaseEnabled) {
     db = getFirestore(app);
     console.log("🔥 Firebase inicializado com sucesso e conectado em tempo real!");
   } catch (e) {
-    console.error("Falha ao inicializar o Firebase. Verifique suas credenciais:", e);
+    console.error("Falha ao inicializar o Firebase:", e);
   }
 } else {
   console.log("ℹ️ Firebase operando com Fallback Local.");
@@ -49,20 +49,20 @@ const pageName = window.location.pathname.split('/').pop().replace('.html', '') 
 
 // Mapeador de Remetentes do Clã para as bolhas de chat estilizadas
 const mapSender = (senderName) => {
-  const nameLower = senderName.toLowerCase();
-  if (nameLower === 'papai') {
+  const nameLower = (senderName || "").toLowerCase();
+  if (nameLower.includes('papai')) {
     return {
       sender: "Papai (Admin)",
       senderRole: "👑 ADMIN",
       avatarFile: "bull_portrait.png"
     };
-  } else if (nameLower === 'miguel') {
+  } else if (nameLower.includes('miguel')) {
     return {
       sender: "Miguel",
       senderRole: "⚡ JOGADOR",
       avatarFile: "fang_portrait.png"
     };
-  } else if (nameLower === 'sophia') {
+  } else if (nameLower.includes('sophia')) {
     return {
       sender: "Sophia",
       senderRole: "✨ REALEZA",
@@ -86,11 +86,48 @@ const formatTimeString = (timestamp) => {
   return String(date.getHours()).padStart(2, '0') + ':' + String(date.getMinutes()).padStart(2, '0');
 };
 
+// Obter canal ativo com segurança absoluta (prevenindo undefined)
+function getActiveChannel() {
+  const ch = window.currentChannel || 'Familia';
+  return ch === 'Familia' ? 'geral' : ch.toLowerCase();
+}
+
 // Exposição do estado de ativação do Firebase para as páginas locais
 window.firebaseService = {
   isFirebaseEnabled: isFirebaseEnabled,
   db: db,
   pageName: pageName
+};
+
+// ==========================================
+// LOCAL STORAGE FALLBACK ENGINE
+// ==========================================
+const localSandbox = {
+  getMessages: (canal) => {
+    return JSON.parse(localStorage.getItem(`qg_local_${canal}`)) || [];
+  },
+  saveMessage: (canal, remetente, tipo, conteudo) => {
+    const list = localSandbox.getMessages(canal);
+    const now = new Date();
+    const timestampStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    
+    const mapped = mapSender(remetente);
+    const newMsg = {
+      id: Date.now(),
+      sender: mapped.sender,
+      senderRole: mapped.senderRole,
+      avatarFile: mapped.avatarFile,
+      text: conteudo,
+      timestamp: timestampStr,
+      isPin: tipo === 'pin'
+    };
+    list.push(newMsg);
+    localStorage.setItem(`qg_local_${canal}`, JSON.stringify(list));
+    return newMsg;
+  },
+  clear: (canal) => {
+    localStorage.removeItem(`qg_local_${canal}`);
+  }
 };
 
 // ==========================================
@@ -110,9 +147,12 @@ function listenToChannel(canalName) {
   }
 
   if (!isFirebaseEnabled) {
-    if (typeof loadLocalStorageMessages === 'function') {
-      loadLocalStorageMessages(window.currentChannel);
-    }
+    // Modo de fallback local
+    const offlineMsgs = localSandbox.getMessages(canalName);
+    offlineMsgs.forEach(msg => {
+      if (typeof appendMessageUI === 'function') appendMessageUI(msg);
+    });
+    if (typeof scrollToBottom === 'function') scrollToBottom();
     return;
   }
 
@@ -156,7 +196,7 @@ function listenToChannel(canalName) {
           if (change.type === "added") {
             const data = change.doc.data();
             const remetenteName = pageName === 'papai' ? 'Papai' : (pageName === 'miguel' ? 'Miguel' : 'Sophia');
-            if (data.remetente !== remetenteName) {
+            if (data.remetente && data.remetente.toLowerCase() !== remetenteName.toLowerCase()) {
               try {
                 const audio = new Audio('sons/new_msg.ogg');
                 audio.play().catch(e => console.log("Sound autoplay blocked:", e));
@@ -182,61 +222,81 @@ function listenToChannel(canalName) {
 
 // Enviar Mensagem de Texto
 window.firebaseSendMessage = async function(text) {
-  if (!isFirebaseEnabled) return;
-  const canalName = window.currentChannel === 'Familia' ? 'geral' : window.currentChannel.toLowerCase();
+  const canalName = getActiveChannel();
   const remetenteName = pageName === 'papai' ? 'Papai' : (pageName === 'miguel' ? 'Miguel' : 'Sophia');
 
-  try {
-    await addDoc(collection(db, "mensagens"), {
-      canal: canalName,
-      remetente: remetenteName,
-      tipo: 'texto',
-      conteúdo: text,
-      timestamp: serverTimestamp()
-    });
+  if (isFirebaseEnabled) {
+    try {
+      await addDoc(collection(db, "mensagens"), {
+        canal: canalName,
+        remetente: remetenteName,
+        tipo: 'texto',
+        conteúdo: text,
+        timestamp: serverTimestamp()
+      });
+      if (typeof playMsg === 'function') playMsg();
+    } catch (e) {
+      console.error("Erro ao enviar mensagem no Firebase:", e);
+    }
+  } else {
+    const newLocalMsg = localSandbox.saveMessage(canalName, remetenteName, 'texto', text);
+    if (typeof appendMessageUI === 'function') appendMessageUI(newLocalMsg);
+    if (typeof scrollToBottom === 'function') scrollToBottom();
     if (typeof playMsg === 'function') playMsg();
-  } catch (e) {
-    console.error("Erro ao enviar mensagem no Firebase:", e);
   }
 };
 
 // Enviar Pin / Emoji animado
 window.firebaseSendPin = async function(pinPath) {
-  if (!isFirebaseEnabled) return;
-  const canalName = window.currentChannel === 'Familia' ? 'geral' : window.currentChannel.toLowerCase();
+  const canalName = getActiveChannel();
   const remetenteName = pageName === 'papai' ? 'Papai' : (pageName === 'miguel' ? 'Miguel' : 'Sophia');
 
-  try {
-    await addDoc(collection(db, "mensagens"), {
-      canal: canalName,
-      remetente: remetenteName,
-      tipo: 'pin',
-      conteúdo: pinPath,
-      timestamp: serverTimestamp()
-    });
+  if (isFirebaseEnabled) {
+    try {
+      await addDoc(collection(db, "mensagens"), {
+        canal: canalName,
+        remetente: remetenteName,
+        tipo: 'pin',
+        conteúdo: pinPath,
+        timestamp: serverTimestamp()
+      });
+      if (typeof playMsg === 'function') playMsg();
+    } catch (e) {
+      console.error("Erro ao enviar pin no Firebase:", e);
+    }
+  } else {
+    const newLocalMsg = localSandbox.saveMessage(canalName, remetenteName, 'pin', pinPath);
+    if (typeof appendMessageUI === 'function') appendMessageUI(newLocalMsg);
+    if (typeof scrollToBottom === 'function') scrollToBottom();
     if (typeof playMsg === 'function') playMsg();
-  } catch (e) {
-    console.error("Erro ao enviar pin no Firebase:", e);
   }
 };
 
 // Limpar Histórico do Canal Ativo
 window.firebaseClearChatHistory = async function() {
-  if (!isFirebaseEnabled) return;
-  if (confirm("Quer mesmo limpar o histórico desse canal no Firestore em tempo real?")) {
-    const canalName = window.currentChannel === 'Familia' ? 'geral' : window.currentChannel.toLowerCase();
-    
-    try {
-      const q = query(collection(db, "mensagens"), where("canal", "==", canalName));
-      const querySnapshot = await getDocs(q);
-      const deletePromises = [];
-      querySnapshot.forEach((docSnapshot) => {
-        deletePromises.push(deleteDoc(docSnapshot.ref));
-      });
-      await Promise.all(deletePromises);
+  const canalName = getActiveChannel();
+  
+  if (isFirebaseEnabled) {
+    if (confirm("Quer mesmo limpar o histórico desse canal no Firestore em tempo real?")) {
+      try {
+        const q = query(collection(db, "mensagens"), where("canal", "==", canalName));
+        const querySnapshot = await getDocs(q);
+        const deletePromises = [];
+        querySnapshot.forEach((docSnapshot) => {
+          deletePromises.push(deleteDoc(docSnapshot.ref));
+        });
+        await Promise.all(deletePromises);
+        if (typeof playMsg === 'function') playMsg();
+      } catch (err) {
+        console.error("Erro ao limpar histórico no Firebase:", err);
+      }
+    }
+  } else {
+    if (confirm("Quer mesmo limpar o histórico desse canal local?")) {
+      localSandbox.clear(canalName);
+      const feed = document.getElementById('chat-feed');
+      if (feed) feed.innerHTML = '';
       if (typeof playMsg === 'function') playMsg();
-    } catch (err) {
-      console.error("Erro ao limpar histórico no Firebase:", err);
     }
   }
 };
@@ -245,9 +305,9 @@ window.firebaseClearChatHistory = async function() {
 // BOOTSTRAP E ASSINATURA DE EVENTOS
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
-  // Inicialização atrasada para garantir que as variáveis lidas das páginas html estejam prontas no DOM
+  // Inicialização pós carregar DOM para ler variáveis do window
   setTimeout(() => {
-    const startChannelName = window.currentChannel === 'Familia' ? 'geral' : window.currentChannel.toLowerCase();
+    const startChannelName = getActiveChannel();
     listenToChannel(startChannelName);
     
     // Sobrescrever manipulador de alteração de canais na tela do Papai
@@ -255,17 +315,17 @@ window.addEventListener('DOMContentLoaded', () => {
       const originalSwitchTab = window.switchTab;
       window.switchTab = function(channelId) {
         originalSwitchTab(channelId);
-        listenToChannel(channelId === 'Familia' ? 'geral' : channelId.toLowerCase());
+        listenToChannel(getActiveChannel());
       };
     }
 
-    // Sobrescrever manipulador de alteração de canais na tela do Miguel e do Sophia
+    // Sobrescrever manipulador de alteração de canais na tela do Miguel e da Sophia
     if (typeof window.switchChannel === 'function') {
       const originalSwitchChannel = window.switchChannel;
       window.switchChannel = function(channelId) {
         originalSwitchChannel(channelId);
-        listenToChannel(channelId === 'Familia' ? 'geral' : channelId.toLowerCase());
+        listenToChannel(getActiveChannel());
       };
     }
-  }, 100);
+  }, 150);
 });

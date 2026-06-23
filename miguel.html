@@ -346,7 +346,7 @@
 
     let typedPin = '';
     const correctPin = '123456';
-    let currentChannel = 'Familia';
+    window.currentChannel = 'Familia';
 
     // Perfil Editável de Miguel persistido
     let playerProfile = {
@@ -556,7 +556,7 @@
     // CONTROLE DE CHAT INTERATIVO POR ABAS
     function switchChannel(channelId) {
       playClick();
-      currentChannel = channelId;
+      window.currentChannel = channelId;
 
       const tabs = ['Familia', 'Miguel', 'Sophia'];
       tabs.forEach(tab => {

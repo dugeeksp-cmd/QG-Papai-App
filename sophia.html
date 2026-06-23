@@ -345,7 +345,7 @@
 
     let typedPin = '';
     const correctPin = '654321';
-    let currentChannel = 'Familia';
+    window.currentChannel = 'Familia';
 
     // Perfil Editável de Sophia persistido
     let playerProfile = {
@@ -554,7 +554,7 @@
     // CONTROLE DE TABELAS DE CANAL DE CHAT
     function switchChannel(channelId) {
       playClick();
-      currentChannel = channelId;
+      window.currentChannel = channelId;
 
       const tabs = ['Familia', 'Miguel', 'Sophia'];
       tabs.forEach(tab => {
