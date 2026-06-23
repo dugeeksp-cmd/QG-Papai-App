@@ -654,30 +654,15 @@
     }
 
     function sendPin(pinPath) {
-      if (window.firebaseService && window.firebaseService.isFirebaseEnabled && typeof window.firebaseSendPin === 'function') {
-        window.firebaseSendPin(pinPath);
-        return;
-      }
-
       playClick();
       document.getElementById('emoji-drawer').classList.add('hidden');
 
-      const now = new Date();
-      const timestampStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-
-      const newMsg = {
-        id: Date.now(),
-        sender: "Sophia",
-        senderRole: "🦄 JOGADORA",
-        avatarFile: playerProfile.avatar,
-        text: pinPath,
-        timestamp: timestampStr,
-        isPin: true
-      };
-
-      appendMessageUI(newMsg);
-      scrollToBottom();
-      playMsg();
+      if (typeof window.firebaseSendPin === 'function') {
+        window.firebaseSendPin(pinPath);
+      } else {
+        console.error("❌ [CHAT] Erro: Serviço Firebase não carregado para enviar PIN.");
+        alert("O chat em tempo real ainda está carregando. Por favor, aguarde alguns instantes!");
+      }
     }
 
     function sendMessage() {
@@ -685,34 +670,14 @@
       const text = input.value.trim();
       if (!text) return;
 
-      if (window.firebaseService && window.firebaseService.isFirebaseEnabled && typeof window.firebaseSendMessage === 'function') {
+      if (typeof window.firebaseSendMessage === 'function') {
         window.firebaseSendMessage(text);
         input.value = '';
         input.focus();
-        return;
+      } else {
+        console.error("❌ [CHAT] Erro: Serviço Firebase não carregado para enviar mensagem.");
+        alert("O chat em tempo real ainda está carregando. Por favor, aguarde alguns instantes!");
       }
-
-      playClick();
-
-      const now = new Date();
-      const timestampStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-
-      const newMsg = {
-        id: Date.now(),
-        sender: "Sophia",
-        senderRole: "🦄 JOGADORA",
-        avatarFile: playerProfile.avatar,
-        text: text,
-        timestamp: timestampStr,
-        isPin: false
-      };
-
-      appendMessageUI(newMsg);
-      scrollToBottom();
-
-      input.value = '';
-      input.focus();
-      playMsg();
     }
 
     // Controle de Exibição / Ocultação do Modal de Opções
