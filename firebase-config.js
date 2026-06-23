@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
-  getFirestore, 
+  initializeFirestore, 
   collection, 
   addDoc, 
   onSnapshot, 
@@ -33,10 +33,13 @@ let db = null;
 
 try {
   app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-  console.log("🔥 [QG-FIREBASE] Inicializado com sucesso! Referência do Firestore (db) criada:", db);
+  // Usa initializeFirestore com experimentalForceLongPolling para garantir conectividade perfeita em iframes, proxies e redes restritas
+  db = initializeFirestore(app, {
+    experimentalForceLongPolling: true
+  });
+  console.log("🔥 [QG-FIREBASE] Inicializado com sucesso habilitando experimentalForceLongPolling! Referência do Firestore (db) criada:", db);
 } catch (e) {
-  console.error("❌ [QG-FIREBASE] Erro ao inicializar o SDK do Firebase:", e);
+  console.error("❌ [QG-FIREBASE] Erro ao inicializar o SDK do Firebase ou Firestore:", e);
 }
 
 // Estágio e canal ativo nas páginas
@@ -178,8 +181,13 @@ function listenToChannel(canalName) {
       }
       isInitial = false;
     }, (error) => {
-      console.error(`❌ [QG-FIREBASE - ERROR] Erro crítico na assinatura de snapshot para canal "${canalName}":`, error);
-      alert(`Erro do Firebase Firestore: ${error.message}\nVerifique as regras de segurança e privilégios da coleção "mensagens" no Console do Firebase.`);
+      console.error(`❌ [QG-FIREBASE - ERROR] Erro crítico no real-time listener (onSnapshot) para o canal "${canalName}":`, error);
+      console.error(`📋 Código de erro do Firebase: "${error?.code}"`);
+      console.error(`📋 Mensagem de erro do Firebase: "${error?.message}"`);
+      console.error("📋 Detalhes do erro original:", error);
+      
+      // Mensagem amigável sem links de documentação quebrados no alert
+      alert(`Ops! Encontramos um problema de conexão com o banco de dados (${error?.code || 'erro'}).\nNo seu navegador, abra o Console de Desenvolvedor (F12) para ver os logs detalhados.`);
     });
   } catch (err) {
     console.error(`❌ [QG-FIREBASE - EXCEPTION] Erro geral ao registrar onSnapshot para "${canalName}":`, err);
@@ -199,8 +207,8 @@ window.firebaseSendMessage = async function(text) {
   console.log(`   - Conteúdo: "${text}" | Remetente: "${remetenteName}"`);
 
   if (!db) {
-    console.error("❌ [QG-FIREBASE] Abortando envio: Firestore 'db' não inicializado.");
-    alert("Firebase Firestore está offline ou desativado. Verifique os logs do console.");
+    console.error("❌ [QG-FIREBASE - ERROR] Abortando envio: Firestore 'db' não inicializado.");
+    alert("O Firestore do Firebase não pôde ser carregado. Verifique os logs no F12.");
     return;
   }
 
@@ -216,8 +224,11 @@ window.firebaseSendMessage = async function(text) {
     console.log(`🎉 [QG-FIREBASE] Mensagem gravada com sucesso no Firestore! Documento ID:`, docRef.id);
     if (typeof playMsg === 'function') playMsg();
   } catch (e) {
-    console.error("❌ [QG-FIREBASE - ERROR] Erro ao gravar mensagem no Firestore:", e);
-    alert(`Falha ao salvar no Firestore: ${e.message}\nCertifique-se de que a coleção "mensagens" está criada no Console do Firebase.`);
+    console.error("❌ [QG-FIREBASE - ERROR] Falha crítica de gravação via addDoc no Firestore!", e);
+    console.error(`📋 Código do erro: "${e?.code}"`);
+    console.error(`📋 Mensagem do erro: "${e?.message}"`);
+    console.error("📋 Pilha/Erro completo:", e);
+    alert(`Erro ao salvar no Firestore: ${e?.message || e}\nAbra a janela de Ferramentas do Desenvolvedor (F12) para depurar se é um bloqueio de regras ou domínio.`);
   }
 };
 
@@ -230,8 +241,8 @@ window.firebaseSendPin = async function(pinPath) {
   console.log(`   - Caminho: "${pinPath}" | Remetente: "${remetenteName}"`);
 
   if (!db) {
-    console.error("❌ [QG-FIREBASE] Abortando envio de PIN: Firestore 'db' não inicializado.");
-    alert("Firebase Firestore está offline ou desativado. Verifique os logs.");
+    console.error("❌ [QG-FIREBASE - ERROR] Abortando envio de PIN: Firestore 'db' não inicializado.");
+    alert("O Firestore do Firebase não pôde ser carregado. Verifique os logs no F12.");
     return;
   }
 
@@ -247,8 +258,11 @@ window.firebaseSendPin = async function(pinPath) {
     console.log(`🎉 [QG-FIREBASE] PIN gravado com sucesso no Firestore! Documento ID:`, docRef.id);
     if (typeof playMsg === 'function') playMsg();
   } catch (e) {
-    console.error("❌ [QG-FIREBASE - ERROR] Erro ao gravar PIN no Firestore:", e);
-    alert(`Falha ao salvar PIN no Firestore: ${e.message}`);
+    console.error("❌ [QG-FIREBASE - ERROR] Falha crítica de gravação de PIN no Firestore!", e);
+    console.error(`📋 Código do erro: "${e?.code}"`);
+    console.error(`📋 Mensagem do erro: "${e?.message}"`);
+    console.error("📋 Pilha/Erro completo:", e);
+    alert(`Erro ao salvar o PIN no Firestore: ${e?.message || e}`);
   }
 };
 
@@ -258,7 +272,7 @@ window.firebaseClearChatHistory = async function() {
   console.log(`🧹 [QG-FIREBASE] Solicitada limpeza de histórico no Firestore para o canal: "${canalName}"`);
 
   if (!db) {
-    console.error("❌ [QG-FIREBASE] Abortando limpeza: Firestore 'db' não inicializado.");
+    console.error("❌ [QG-FIREBASE - ERROR] Abortando limpeza: Firestore 'db' não inicializado.");
     return;
   }
 
@@ -277,8 +291,11 @@ window.firebaseClearChatHistory = async function() {
       console.log(`🎉 [QG-FIREBASE] Histórico do canal "${canalName}" limpo com sucesso!`);
       if (typeof playMsg === 'function') playMsg();
     } catch (err) {
-      console.error("❌ [QG-FIREBASE - ERROR] Falha ao excluir documentos do Firestore:", err);
-      alert(`Não foi possível limpar o histórico: ${err.message}`);
+      console.error("❌ [QG-FIREBASE - ERROR] Falha crítica ao realizar a limpeza da coleção no Firestore!", err);
+      console.error(`📋 Código do erro: "${err?.code}"`);
+      console.error(`📋 Mensagem do erro: "${err?.message}"`);
+      console.error("📋 Pilha/Erro completo:", err);
+      alert(`Não foi possível limpar o histórico do Firestore: ${err?.message || err}`);
     }
   }
 };
