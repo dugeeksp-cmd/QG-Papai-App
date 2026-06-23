@@ -654,6 +654,11 @@
     }
 
     function sendPin(pinPath) {
+      if (window.firebaseService && window.firebaseService.isFirebaseEnabled && typeof window.firebaseSendPin === 'function') {
+        window.firebaseSendPin(pinPath);
+        return;
+      }
+
       playClick();
       document.getElementById('emoji-drawer').classList.add('hidden');
 
@@ -673,15 +678,19 @@
       appendMessageUI(newMsg);
       scrollToBottom();
       playMsg();
-
-      // [INTEGRAÇÃO FIREBASE FUTURA]: Salvar em tempo real no Firestore
-      console.log("Firebase trigger pin:", newMsg);
     }
 
     function sendMessage() {
       const input = document.getElementById('chat-input');
       const text = input.value.trim();
       if (!text) return;
+
+      if (window.firebaseService && window.firebaseService.isFirebaseEnabled && typeof window.firebaseSendMessage === 'function') {
+        window.firebaseSendMessage(text);
+        input.value = '';
+        input.focus();
+        return;
+      }
 
       playClick();
 
@@ -704,9 +713,6 @@
       input.value = '';
       input.focus();
       playMsg();
-
-      // [INTEGRAÇÃO FIREBASE FUTURA]: Salvar em tempo real no Firestore
-      console.log("Firebase trigger message:", newMsg);
     }
 
     // Controle de Exibição / Ocultação do Modal de Opções

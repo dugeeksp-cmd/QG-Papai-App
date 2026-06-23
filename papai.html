@@ -379,6 +379,11 @@
     }
 
     function sendPin(pinPath) {
+      if (window.firebaseService && window.firebaseService.isFirebaseEnabled && typeof window.firebaseSendPin === 'function') {
+        window.firebaseSendPin(pinPath);
+        return;
+      }
+
       playClick();
       document.getElementById('emoji-drawer').classList.add('hidden');
 
@@ -398,15 +403,19 @@
       appendMessageUI(newMsg);
       scrollToBottom();
       playMsg();
-
-      // [INTEGRAÇÃO FIREBASE FUTURA]: Salvar em tempo real no Firestore
-      console.log("Firebase PIN send trigger:", newMsg);
     }
 
     function sendMessage() {
       const input = document.getElementById('chat-input');
       const text = input.value.trim();
       if (!text) return;
+
+      if (window.firebaseService && window.firebaseService.isFirebaseEnabled && typeof window.firebaseSendMessage === 'function') {
+        window.firebaseSendMessage(text);
+        input.value = '';
+        input.focus();
+        return;
+      }
 
       playClick();
       
@@ -429,9 +438,6 @@
       input.value = '';
       input.focus();
       playMsg();
-
-      // [INTEGRAÇÃO FIREBASE FUTURA]: Salvar em tempo real no Firestore
-      console.log("Firebase Message send trigger:", newMsg);
     }
 
     function addSystemMessage(text) {
@@ -454,12 +460,15 @@
     }
 
     function clearChatHistory() {
+      if (window.firebaseService && window.firebaseService.isFirebaseEnabled && typeof window.firebaseClearChatHistory === 'function') {
+        window.firebaseClearChatHistory();
+        return;
+      }
+
       playClick();
       if (confirm("Quer mesmo limpar o histórico desse canal?")) {
         document.getElementById('chat-feed').innerHTML = '';
         playMsg();
-        // [INTEGRAÇÃO FIREBASE FUTURA]: Executar exclusão da coleção no Firestore
-        console.log("Firebase clear triggers for active collection");
       }
     }
   </script>
