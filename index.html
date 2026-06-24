@@ -303,15 +303,7 @@
 
     function selectProfile(profileId) {
       playClick();
-      
-      // Papai ignora qualquer validação de senha temporária e vai direto para a tela do Papai
-      if (profileId === 'papai') {
-        startLoginSimulation('papai.html');
-        return;
-      }
-      
-      // Desativação Temporária de Senhas para acesso ágil - demais perfis
-      startLoginSimulation(profileId + '.html');
+      startLoginSimulation('perfil.html?id=' + profileId);
     }
 
     function closePinModal() {
@@ -421,11 +413,13 @@
       ];
       
       if (activeAgents.length === 0) {
-        container.style.display = 'none';
+        container.classList.add('hidden');
+        container.classList.remove('flex');
         return;
       }
       
-      container.style.display = 'flex';
+      container.classList.remove('hidden');
+      container.classList.add('flex');
       container.innerHTML = `
         <div class="flex items-center gap-1.5 mr-2">
           <span class="relative flex h-3 w-3">
