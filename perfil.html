@@ -94,26 +94,42 @@
   <div id="main-content" class="max-w-6xl w-full mx-auto flex flex-col gap-4 md:gap-6 hidden">
 
     <!-- Topo / Barra Superior -->
-    <div class="flex justify-between items-center bg-black/60 p-3 md:p-4 border-2 border-black rounded-2xl">
-      <div class="flex items-center gap-2.5">
-        <span id="header-emoji-indicator" class="text-3xl">👑</span>
-        <span id="header-title-text" class="font-brawl text-xl md:text-2xl tracking-wide uppercase text-yellow-500 drop-shadow-[0_2px_0_#000] brawl-text-stroke-sm">Painel Administrador</span>
+    <div class="flex flex-col gap-3 bg-black/60 p-3 md:p-4 border-2 border-black rounded-2xl">
+      <div class="flex justify-between items-center flex-wrap gap-3">
+        <div class="flex items-center gap-2.5">
+          <span id="header-emoji-indicator" class="text-3xl">👑</span>
+          <span id="header-title-text" class="font-brawl text-xl md:text-2xl tracking-wide uppercase text-yellow-500 drop-shadow-[0_2px_0_#000] brawl-text-stroke-sm">Painel Administrador</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <!-- Indicador de Reunião Ativa do Meet Familiar -->
+          <a id="meet-indicator-btn" href="#" target="_blank" class="hidden animate-pulse bg-red-600 hover:bg-red-500 border-2 border-black font-brawl uppercase text-[10px] px-3.5 py-1.5 rounded-full text-white shadow-[2px_2px_0_#000]">
+            🎥 REUNIÃO ATIVA!
+          </a>
+
+          <!-- Botão Engrenagem de Opções (Oculto para o Papai, visível para as crianças) -->
+          <button id="header-options-btn" onclick="openOptionsModal()" class="brawl-btn-yellow text-[10px] md:text-xs px-3.5 py-2 font-brawl uppercase flex items-center gap-1.5">
+            ⚙️ Opções
+          </button>
+          
+          <a href="index.html" onclick="logoutProfile()" class="brawl-btn-red text-[10px] md:text-xs px-4 py-2 font-brawl uppercase">
+            Sair 🚪
+          </a>
+        </div>
       </div>
       
-      <div class="flex items-center gap-3">
-        <!-- Indicador de Reunião Ativa do Meet Familiar -->
-        <a id="meet-indicator-btn" href="#" target="_blank" class="hidden animate-pulse bg-red-600 hover:bg-red-500 border-2 border-black font-brawl uppercase text-[10px] px-3.5 py-1.5 rounded-full text-white shadow-[2px_2px_0_#000]">
-          🎥 REUNIÃO ATIVA!
-        </a>
-
-        <!-- Botão Engrenagem de Opções (Oculto para o Papai, visível para as crianças) -->
-        <button id="header-options-btn" onclick="openOptionsModal()" class="brawl-btn-yellow text-[10px] md:text-xs px-3.5 py-2 font-brawl uppercase flex items-center gap-1.5">
-          ⚙️ Opções
-        </button>
-        
-        <a href="index.html" onclick="logoutProfile()" class="brawl-btn-red text-[10px] md:text-xs px-4 py-2 font-brawl uppercase">
-          Sair 🚪
-        </a>
+      <!-- Barra de Atalhos Rápidos e Navegação de Clã (Navegação Exclusiva) -->
+      <div class="border-t border-white/10 pt-2.5 flex justify-between items-center flex-wrap gap-2 text-xs">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-brawl text-yellow-400 uppercase tracking-widest text-[9px] mr-1">Atalhos de Clã:</span>
+          <a href="index.html" onclick="playClick()" class="bg-black/40 hover:bg-black/60 text-slate-300 font-bold px-3 py-1 rounded border border-white/10 hover:border-yellow-400">Lobby Geral 🏠</a>
+          <a href="perfil.html?id=papai" onclick="playClick()" class="bg-yellow-600/30 hover:bg-yellow-600/50 text-yellow-400 font-bold px-3 py-1 rounded border border-yellow-500/30">QG Papai 👑</a>
+          <a href="perfil.html?id=miguel" onclick="playClick()" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-400 font-bold px-3 py-1 rounded border border-blue-500/30">Sala Miguel 🦈</a>
+          <a href="perfil.html?id=sophia" onclick="playClick()" class="bg-pink-600/30 hover:bg-pink-600/50 text-pink-400 font-bold px-3 py-1 rounded border border-pink-500/30">Sala Sophia 🌸</a>
+        </div>
+        <div class="text-[10px] text-white/50 font-mono tracking-wider uppercase">
+          Frente Unificada • Versão 4.2
+        </div>
       </div>
     </div>
 
@@ -313,7 +329,37 @@
               <a id="chat-meet-btn" href="#" target="_blank" style="display: none;" class="bg-red-650 hover:bg-red-550 border-2 border-black font-brawl uppercase text-[9px] px-2.5 py-1 rounded-full text-white shadow-[1.5px_1.5px_0_#000] animate-pulse flex items-center gap-1">
                 🎥 GOOGLE MEET
               </a>
-              <button id="clear-chat-btn" onclick="clearChatHistory()" class="text-red-400 hover:text-red-300 uppercase text-[9px] font-brawl bg-black/60 px-2 py-0.5 rounded border border-red-500/30 hidden">Limpar Histórico</button>
+            </div>
+          </div>
+
+          <!-- Container de Botões Extras (Ações de Limpeza de Chat, Configurações Rápidas, Status de Áudio, Emergências) -->
+          <div class="brawl-extra-actions-container flex flex-wrap gap-2.5 items-center bg-black/40 p-3 border-b-2 border-black/30 rounded-xl mt-2 select-none">
+            <span class="text-[9px] font-brawl text-yellow-400 uppercase tracking-widest mr-1">Controles Rápidos QG:</span>
+            
+            <!-- Botão de Limpar Chat (ID original protegido, apenas admin ou integrado) -->
+            <button id="clear-chat-btn" onclick="clearChatHistory()" class="brawl-btn-red text-[10px] px-3.5 py-1.5 font-brawl uppercase flex items-center gap-1 shadow-[2px_2px_0_#000] hover:scale-105 active:scale-95 transition-transform hidden">
+              🧹 Limpar Histórico
+            </button>
+            
+            <!-- Botão de Controle e Status de Áudio (Mutar/Ativar) -->
+            <button id="audio-toggle-btn" onclick="toggleAudioPlayback()" class="brawl-btn-yellow text-[10px] px-3.5 py-1.5 font-brawl uppercase flex items-center gap-1 shadow-[2px_2px_0_#000] hover:scale-105 active:scale-95 transition-transform">
+              🔊 Áudio: Ativo
+            </button>
+            
+            <!-- Botão de Customização Rápida de Perfil -->
+            <button id="quick-settings-btn" onclick="openOptionsModal()" class="brawl-btn-yellow text-[10px] px-3.5 py-1.5 font-brawl uppercase flex items-center gap-1 shadow-[2px_2px_0_#000] hover:scale-105 active:scale-95 transition-transform">
+              ⚙️ Customizar Perfil
+            </button>
+            
+            <!-- Botão de Alerta Rápido / Chamar Papai -->
+            <button id="quick-emergency-btn" onclick="chamarPapai()" class="bg-red-600 hover:bg-red-500 border-2 border-black text-white font-brawl uppercase text-[10px] px-3.5 py-1.5 rounded-xl shadow-[2px_2px_0_#000] hover:scale-105 active:scale-95 transition-transform flex items-center gap-1">
+              🚨 Chamar Papai
+            </button>
+            
+            <!-- Indicador estético de Conexão com Firebase -->
+            <div class="ml-auto flex items-center gap-1 bg-black/50 border border-green-500/20 px-2 py-1 rounded text-[9px] text-green-400 font-mono">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              <span>FIREBASE: OK</span>
             </div>
           </div>
 
@@ -343,10 +389,15 @@
               </div>
             </div>
 
-            <div class="flex gap-2">
+            <div class="flex gap-2 flex-wrap sm:flex-nowrap">
               <!-- Botão p/ abrir a gaveta de emojis -->
-              <button id="emoji-drawer-toggle-btn" onclick="toggleEmojiDrawer()" class="brawl-btn-yellow font-brawl text-2xl uppercase px-4 whitespace-nowrap flex items-center justify-center">
+              <button id="emoji-drawer-toggle-btn" onclick="toggleEmojiDrawer()" class="brawl-btn-yellow font-brawl text-2xl uppercase px-4 whitespace-nowrap flex items-center justify-center" title="Escolha seus Emojis">
                 ☺
+              </button>
+              
+              <!-- Botão p/ anexar Mídia / Pins rápidos diretamente (Brawl Theme) -->
+              <button id="media-upload-btn" onclick="toggleEmojiDrawer()" class="brawl-btn-yellow font-brawl text-xs uppercase px-3 py-1.5 whitespace-nowrap flex items-center justify-center gap-1.5" title="Selecione Pins Oficiais">
+                🖼️ Pins/Mídia
               </button>
               
               <input type="text" id="chat-input" placeholder="Escreva uma mensagem..." class="flex-grow bg-slate-900 border-2 border-black rounded-xl p-3 text-white text-sm focus:outline-none focus:border-yellow-400 font-semibold" onkeydown="handleKeyDown(event)">

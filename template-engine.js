@@ -90,12 +90,14 @@ let activeProfile = PROFILE_REGISTRY.papai;
 let typedPin = "";
 let playerProfileState = null;
 
-// Inicializa sons
+// Inicializa sons e controle de áudio
+let audioEnabled = true;
 const clickSound = document.getElementById('audio-click');
 const msgSound = document.getElementById('audio-msg');
 const unlockSound = document.getElementById('audio-unlock');
 
 function playClick() {
+  if (!audioEnabled) return;
   if (clickSound) {
     clickSound.currentTime = 0;
     clickSound.play().catch(err => console.log('Sons click bloqueado:', err));
@@ -103,6 +105,7 @@ function playClick() {
 }
 
 function playMsg() {
+  if (!audioEnabled) return;
   if (msgSound) {
     msgSound.currentTime = 0;
     msgSound.play().catch(err => console.log('Sons msg bloqueado:', err));
@@ -110,11 +113,28 @@ function playMsg() {
 }
 
 function playUnlock() {
+  if (!audioEnabled) return;
   if (unlockSound) {
     unlockSound.currentTime = 0;
     unlockSound.play().catch(err => console.log('Sons unlock bloqueado:', err));
   }
 }
+
+// Alterna o status de áudio do chat com retorno visual no botão extra
+window.toggleAudioPlayback = function() {
+  audioEnabled = !audioEnabled;
+  playClick();
+  const btn = document.getElementById('audio-toggle-btn');
+  if (btn) {
+    if (audioEnabled) {
+      btn.innerText = "🔊 Áudio: Ativo";
+      btn.className = "brawl-btn-yellow text-[10px] px-3.5 py-1.5 font-brawl uppercase flex items-center gap-1 shadow-[2px_2px_0_#000] hover:scale-105 active:scale-95 transition-transform";
+    } else {
+      btn.innerText = "🔇 Áudio: Mudo";
+      btn.className = "brawl-btn-red text-[10px] px-3.5 py-1.5 font-brawl uppercase flex items-center gap-1 shadow-[2px_2px_0_#000] hover:scale-105 active:scale-95 transition-transform";
+    }
+  }
+};
 
 // 2. BOOTSTRAP DINÂMICO
 window.addEventListener('load', () => {
