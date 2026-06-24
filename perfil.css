@@ -1,0 +1,165 @@
+/* 
+  ==========================================================================
+  PERFIL.CSS - Folha de Estilo Unificada de Perfil Dinâmico (Brawl Stars Theme)
+  ==========================================================================
+*/
+
+:root {
+  --user-theme-primary: #FFE800;
+  --user-theme-secondary: #C55301;
+  --user-theme-dark: #121212;
+  --user-theme-border: #FFD700;
+  --user-theme-bg: linear-gradient(135deg, #242424 0%, #121212 100%);
+  --user-theme-glow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Container Principal Adaptável */
+.dynamic-theme-container {
+  background: var(--user-theme-bg) !important;
+  border: 5px solid var(--user-theme-border) !important;
+  box-shadow: 0 12px 0px rgba(0, 0, 0, 0.65), inset 0 0 35px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Botão Vibrante do Perfil Dinâmico */
+.brawl-btn-dynamic {
+  background: linear-gradient(to bottom, var(--user-theme-primary) 0%, var(--user-theme-secondary) 100%);
+  border: 4px solid #000;
+  border-bottom-width: 8px;
+  border-radius: 16px;
+  color: #fff;
+  font-family: 'Lilita One', sans-serif;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0px #000;
+  box-shadow: 0 4px 0px rgba(0,0,0,0.3);
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+
+.brawl-btn-dynamic:hover {
+  filter: brightness(1.1);
+  transform: translateY(1px);
+  border-bottom-width: 7px;
+}
+
+.brawl-btn-dynamic:active {
+  transform: translateY(3px) !important;
+  border-bottom-width: 4px !important;
+  box-shadow: 0 1px 0px rgba(0,0,0,0.3) !important;
+}
+
+/* Textos Vibrantes Dinâmicos */
+.dynamic-text-vibrant {
+  color: var(--user-theme-primary);
+  text-shadow: 2px 2px 0px #000;
+}
+
+/* Badge Temática Dinâmica */
+.dynamic-accent-badge {
+  background: linear-gradient(135deg, var(--user-theme-primary), var(--user-theme-secondary));
+  color: #fff;
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0px #000;
+  font-family: 'Lilita One', sans-serif;
+  text-transform: uppercase;
+  transform: rotate(-1deg);
+}
+
+/* Customizadores do Teclado Virtual de PIN */
+.brawl-pin-slots-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.brawl-pin-slot {
+  width: 42px;
+  height: 48px;
+  background-color: #000;
+  border: 3px solid #1e293b;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Lilita One', sans-serif;
+  font-size: 24px;
+  color: #fff;
+  box-shadow: inset 0 4px 4px rgba(0,0,0,0.5);
+  transition: all 0.15s ease;
+}
+
+.brawl-pin-slot.filled {
+  border-color: var(--user-theme-border);
+  color: var(--user-theme-primary);
+  text-shadow: 0 0 8px var(--user-theme-primary);
+}
+
+/* Customizações do Battle Card de Ranks */
+.brawl-battle-card {
+  border: 4px solid #000000;
+  border-bottom-width: 8px;
+  border-radius: 20px;
+  box-shadow: 0 8px 0px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.bg-rank-gold {
+  background: linear-gradient(135deg, #b45309 0%, #d97706 40%, #f59e0b 100%);
+  border-color: #f59e0b;
+}
+
+.bg-rank-diamond {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 40%, #3b82f6 100%);
+  border-color: #3b82f6;
+}
+
+.bg-rank-mythic {
+  background: linear-gradient(135deg, #be185d 0%, #db2777 40%, #ec4899 100%);
+  border-color: #ec4899;
+}
+
+.bg-rank-masters {
+  background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 40%, #8b5cf6 100%);
+  border-color: #8b5cf6;
+}
+
+/* Avatares na Customização */
+.brawl-avatar-option {
+  width: 100%;
+  aspect-ratio: 1/1;
+  border: 3px solid #000;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #1a1a24;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.brawl-avatar-option.active {
+  border-color: var(--user-theme-primary);
+  box-shadow: 0 0 10px var(--user-theme-primary);
+  transform: scale(1.05);
+}
+
+.brawl-avatar-option:hover {
+  transform: scale(1.05);
+}
+
+/* Fundos de Rank na Customização */
+.brawl-bg-option {
+  border: 3px solid #000;
+  border-radius: 10px;
+  font-family: 'Lilita One', sans-serif;
+  color: #fff;
+  text-shadow: 1px 1px 0px #000;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+}
+
+.brawl-bg-option.active {
+  border-color: #fff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}

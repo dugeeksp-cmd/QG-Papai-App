@@ -43,7 +43,14 @@ try {
 }
 
 // Estágio e canal ativo nas páginas
-const pageName = window.location.pathname.split('/').pop().replace('.html', '') || 'papai';
+let pageName = window.location.pathname.split('/').pop().replace('.html', '') || 'papai';
+if (pageName === 'perfil') {
+  const urlParams = new URLSearchParams(window.location.search);
+  const profileId = urlParams.get('id');
+  if (profileId) {
+    pageName = profileId;
+  }
+}
 console.log(`📱 [QG-FIREBASE] Identificado no contexto da página: "${pageName}"`);
 
 // Mapeador de Remetentes do Clã para as bolhas de chat estilizadas
