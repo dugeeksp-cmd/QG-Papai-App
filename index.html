@@ -9,8 +9,8 @@
   <title>QG do Papai - Lobby Principal</title>
   
   <!-- Estilos Mãe separados de Brawl Stars -->
-  <link rel="stylesheet" href="style.css?v=2.2">
-  <link rel="stylesheet" href="rodape.css?v=4.0">
+  <link rel="stylesheet" href="style.css?v=4.2">
+  <link rel="stylesheet" href="rodape.css?v=4.2">
   
   <!-- CSS Auxiliar Tailwind (CDN) para facilitar flexibilidade de layout responsivo rápido -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -331,7 +331,7 @@
       if (typedPin === passcodes[activeTarget]) {
         // Desbloqueia! Toca áudio clássico e fecha o modal
         document.getElementById('pin-modal').classList.add('hidden');
-        startLoginSimulation(activeTarget + '.html');
+        startLoginSimulation('perfil.html?id=' + activeTarget);
       } else {
         // Faz barulho de clique e limpa com cor vermelha
         playClick();
@@ -443,7 +443,7 @@
     // Carrega o footer modular dinamicamente via Fetch
     async function loadModularFooter() {
       try {
-        const response = await fetch('rodape.html?v=4.0');
+        const response = await fetch('rodape.html?v=4.2');
         if (response.ok) {
           const html = await response.text();
           document.getElementById('modular-footer-container').innerHTML = html;
@@ -452,7 +452,7 @@
           // Fallback visual caso ocorra algum erro temporário de fetch local
           document.getElementById('modular-footer-container').innerHTML = `
             <div class="brawl-emotional-footer-card text-center">
-              <span class="font-brawl text-[#FFE800]">⚡ QG DO PAPAI • Brawl Stars Theme © 2026 • Versão: 4.0</span>
+              <span class="font-brawl text-[#FFE800]">⚡ QG DO PAPAI • Brawl Stars Theme © 2026 • Versão: 4.2</span>
             </div>
           `;
         }
