@@ -1,0 +1,125 @@
+/* Styling for the Emotional Footer Card Component (Brawl Stars Theme) */
+.brawl-emotional-footer-card {
+  width: 100%;
+  background: linear-gradient(135deg, #1b122c 0%, #0c0817 100%);
+  border: 4px solid #000000;
+  border-bottom: 8px solid #000000;
+  border-radius: 20px;
+  box-shadow: 0 8px 0px rgba(0, 0, 0, 0.45);
+  padding: 16px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.brawl-emotional-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Media query to split into row on md screens */
+@media (min-width: 768px) {
+  .brawl-emotional-content {
+    flex-direction: row;
+    gap: 24px;
+    align-items: center;
+  }
+}
+
+/* Family Photo Container */
+.brawl-family-photo-container {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 4/3;
+  border: 4px solid #000000;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #000;
+  flex-shrink: 0;
+  box-shadow: 3px 3px 0px #000;
+}
+
+.brawl-family-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.brawl-family-photo-container:hover .brawl-family-photo {
+  transform: scale(1.05);
+}
+
+.photo-glow-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+}
+
+/* Family Info Block */
+.brawl-family-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+  flex-grow: 1;
+}
+
+@media (min-width: 768px) {
+  .brawl-family-info {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+/* Family Badge */
+.brawl-family-badge {
+  background: linear-gradient(to bottom, #ffeb00, #ff9c00);
+  border: 3px solid #000000;
+  border-bottom-width: 5px;
+  border-radius: 12px;
+  color: #ffffff;
+  font-family: 'Lilita One', cursive, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  text-shadow: 2px 2px 0px #c55301, -1px -1px 0px #c55301, 1px -1px 0px #c55301, -1px 1px 0px #c55301, 3px 3px 0px #000000;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+  display: inline-block;
+  text-transform: uppercase;
+  transform: rotate(-1.5deg);
+}
+
+/* Emotional Message */
+.brawl-emotional-msg {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #e2dcf4;
+  font-weight: 600;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.7);
+}
+
+@media (min-width: 768px) {
+  .brawl-emotional-msg {
+    font-size: 13px;
+  }
+}
+
+/* Version Badge */
+.brawl-version-badge {
+  background-color: #2a223f;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-family: 'Lilita One', sans-serif;
+  font-size: 10px;
+  color: #ffe800;
+  box-shadow: 1px 1px 0px #000;
+  display: inline-block;
+  margin-top: 4px;
+}

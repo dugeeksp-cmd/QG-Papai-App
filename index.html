@@ -6,10 +6,11 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>QG do Papai - Seleção de Perfil</title>
+  <title>QG do Papai - Lobby Principal</title>
   
   <!-- Estilos Mãe separados de Brawl Stars -->
   <link rel="stylesheet" href="style.css?v=2.2">
+  <link rel="stylesheet" href="rodape.css?v=4.0">
   
   <!-- CSS Auxiliar Tailwind (CDN) para facilitar flexibilidade de layout responsivo rápido -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -25,35 +26,97 @@
       }
     }
   </script>
+  <style>
+    /* Custom Brawl Stars style enhancements */
+    .brawl-card-gold {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+      box-shadow: 0 10px 0px #78350f, 0 15px 25px rgba(245, 158, 11, 0.35);
+      border: 4px solid #000;
+      border-bottom: 10px solid #000;
+    }
+    .brawl-card-blue {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+      box-shadow: 0 10px 0px #1e3a8a, 0 15px 25px rgba(59, 130, 246, 0.35);
+      border: 4px solid #000;
+      border-bottom: 10px solid #000;
+    }
+    .brawl-card-pink {
+      background: linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%);
+      box-shadow: 0 10px 0px #5c0632, 0 15px 25px rgba(236, 72, 153, 0.35);
+      border: 4px solid #000;
+      border-bottom: 10px solid #000;
+    }
+    .brawl-card-gray {
+      background: linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%);
+      box-shadow: 0 10px 0px #1e293b;
+      border: 4px solid #000;
+      border-bottom: 10px solid #000;
+    }
+    .brawl-lobby-btn {
+      transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .brawl-lobby-btn:active {
+      transform: scale(0.95) !important;
+    }
+    /* Partículas de fundo */
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+  </style>
 </head>
-<body class="brawl-stripe-bg no-scroll-body screen-respiro-container flex flex-col justify-between select-none gap-3.5">
+<body class="brawl-stripe-bg screen-respiro-container flex flex-col justify-between select-none gap-4 overflow-y-auto min-h-screen relative text-white">
+
+  <!-- Canvas para partículas flutuantes e brilhos de fundo -->
+  <canvas id="particles-canvas"></canvas>
 
   <!-- Efeitos Sonoros Reais sem barra inicial -->
   <audio id="audio-click" src="sons/menu_click_01.ogg" preload="auto"></audio>
   <audio id="audio-login" src="sons/load_login.ogg" preload="auto"></audio>
 
-  <!-- TOPO: Cabeçalho com espaço planejado e reservado para logo-qg.png -->
-  <header class="py-2.5 px-4 bg-black/65 border-4 border-black rounded-2xl z-10 flex-shrink-0 shadow-[4px_4px_0_#000]">
-    <div class="max-w-6xl mx-auto flex flex-row items-center justify-between gap-2">
-      
-      <div class="flex items-center">
-        <!-- Logo Horizontal QG do Papai -->
-        <img src="imagens/ui/logo_hori.png" alt="QG do Papai" class="lobby-logo-enlarged select-none pointer-events-none filter drop-shadow-[0_2px_0_#000]" onerror="this.src='https://placehold.co/240x50/1e052c/ffffff?text=QG+DO+PAPAI&font=Lilita+One';">
-      </div>
-
-      <!-- Placa de Atividades -->
-      <div class="bg-amber-500 text-black px-3.5 py-1 rounded-full border-4 border-black font-brawl uppercase text-[10px] md:text-xs shadow-[2px_2px_0_#000] tracking-wide flex-shrink-0">
-        Lobby Principal 👑
-      </div>
-
+  <!-- TOPO: Cabeçalho com o LOGO QG DO PAPAI centralizado em destaque -->
+  <header class="w-full max-w-4xl mx-auto flex flex-col items-center justify-center gap-2 z-10 pt-2 flex-shrink-0">
+    <!-- Logo Centralizado em Destaque -->
+    <div class="flex flex-col items-center justify-center gap-1">
+      <img src="imagens/ui/logo_hori.png" alt="QG do Papai" class="h-20 md:h-28 object-contain filter drop-shadow-[0_4px_0_#000] select-none pointer-events-none transform hover:scale-105 transition-transform duration-350" onerror="this.src='https://placehold.co/320x80/1e052c/ffffff?text=QG+DO+PAPAI&font=Lilita+One';">
+      <!-- Placa do Clã -->
+      <span class="bg-amber-500 text-black px-4 py-1 rounded-full border-4 border-black font-brawl uppercase text-xs md:text-sm shadow-[3px_3px_0_#000] tracking-wider transform rotate-[-1deg]">
+        LOBBY PRINCIPAL 👑
+      </span>
     </div>
   </header>
 
-  <!-- CENTRO: Seleção de Brawlers / Perfis (4 grandes Cards no estilo Brawl Stars) -->
-  <main class="max-w-4xl w-full mx-auto px-4 py-2 md:py-4 flex-grow flex flex-col justify-between overflow-hidden min-h-0">
+  <!-- ÁREA DINÂMICA: STATUS ONLINE -->
+  <section class="w-full max-w-4xl mx-auto z-10 flex-shrink-0">
+    <div id="status-online-container" class="hidden max-w-xl mx-auto bg-black/60 border-2 border-green-500 rounded-xl p-2.5 flex items-center justify-center gap-4 flex-wrap select-none shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+      <!-- Injetado dinamicamente via JS. Fica com display: none (hidden) se a lista de agentes estiver vazia -->
+    </div>
+  </section>
+
+  <!-- MEIO: MISSÃO DO DIA -->
+  <section class="w-full max-w-2xl mx-auto z-10 flex-shrink-0">
+    <div class="bg-white/10 backdrop-blur-md border-2 border-white/20 p-4 rounded-2xl shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] text-center relative overflow-hidden">
+      <div class="absolute -top-10 -left-10 w-24 h-24 bg-yellow-400/10 rounded-full blur-xl pointer-events-none"></div>
+      <div class="absolute -bottom-10 -right-10 w-24 h-24 bg-pink-500/10 rounded-full blur-xl pointer-events-none"></div>
+      <h3 class="font-brawl text-yellow-300 text-sm md:text-base tracking-widest uppercase drop-shadow-[0_2px_0_#000] mb-1.5 animate-bounce">
+        ⭐ MISSÃO DE HOJE ⭐
+      </h3>
+      <p class="text-xs md:text-sm text-white/90 font-semibold tracking-wide font-sansAlt italic leading-relaxed">
+        "Completar todos os deveres de casa para liberar gemas secretas e desbloquear 30 minutos de Brawl Stars no QG do Papai! Cooperação total na Arena Familiar! 🚀👑"
+      </p>
+    </div>
+  </section>
+
+  <!-- PRINCIPAL: Seleção de Perfis (Grid 2x2 com efeitos de brilho e active:scale-95) -->
+  <main class="max-w-4xl w-full mx-auto px-4 py-1 z-10 flex-grow flex flex-col justify-center gap-3">
     
-    <div class="text-center flex-shrink-0 my-1">
-      <span class="bg-black/80 text-[#FFE800] uppercase font-brawl text-[8px] md:text-[10px] px-3 py-0.5 border border-black rounded-full tracking-widest inline-block shadow-[1px_1px_0_#000]">
+    <div class="text-center flex-shrink-0">
+      <span class="bg-black/80 text-[#FFE800] uppercase font-brawl text-[9px] md:text-xs px-3 py-1 border border-black rounded-full tracking-widest inline-block shadow-[1px_1px_0_#000]">
         Selecione o Brawler Requerido
       </span>
       <h2 class="text-lg md:text-2xl lg:text-3xl font-brawl tracking-tight uppercase text-white mt-1 drop-shadow-[0_2px_0_#000] brawl-text-stroke-sm md:brawl-text-stroke">
@@ -61,76 +124,76 @@
       </h2>
     </div>
 
-    <!-- Grid dos Perfis: Fixo em 2 colunas e 2 linhas em qualquer tamanho de tela -->
-    <div class="grid grid-cols-2 grid-rows-2 gap-2.5 md:gap-4 flex-grow w-full max-h-[55vh] min-h-0 my-auto items-stretch justify-items-stretch">
+    <!-- Grid de Perfis 2x2 -->
+    <div class="grid grid-cols-2 gap-3 md:gap-5 max-w-2xl w-full mx-auto">
       
-      <!-- Card 1: PAPAI -->
-      <div onclick="selectProfile('papai')" class="group brawl-card bg-gradient-to-b from-amber-600 via-yellow-500 to-amber-700 p-0.5 md:p-1 text-center flex flex-col justify-between cursor-pointer h-full min-h-0 relative select-none">
-        <div class="p-1 md:p-3 flex items-center justify-center flex-grow min-h-0">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white/15 rounded-full mx-auto flex items-center justify-center border-2 md:border-4 border-white/10 group-hover:scale-105 transition-all shadow-inner overflow-hidden relative">
+      <!-- Card 1: PAPAI (Dourado) -->
+      <div onclick="selectProfile('papai')" class="group brawl-lobby-btn brawl-card-gold p-0.5 md:p-1 text-center flex flex-col justify-between cursor-pointer relative select-none rounded-[20px]">
+        <div class="p-2 md:p-4 flex items-center justify-center flex-grow">
+          <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white/10 rounded-full mx-auto flex items-center justify-center border-2 md:border-4 border-white/20 group-hover:scale-105 group-hover:border-yellow-300 transition-all shadow-inner overflow-hidden relative">
             <img id="avatar-papai" src="imagens/perfil/bull_portrait.png" alt="Papai" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/100/f59e0b/ffffff?text=Papai';">
             <span class="text-xl md:text-4xl absolute opacity-30 select-none pointer-events-none">🔥</span>
           </div>
         </div>
-        <div class="bg-black/45 p-1 md:p-2.5 border-t border-black/30 rounded-b-[16px] flex flex-col gap-0.5 flex-shrink-0 justify-center">
+        <div class="bg-black/45 p-1.5 md:p-2.5 border-t border-black/30 rounded-b-[16px] flex flex-col gap-0.5">
           <span class="font-brawl text-xs sm:text-sm md:text-lg tracking-wide uppercase text-white drop-shadow-[0_1.5px_0_#000] group-hover:text-yellow-300 truncate">
             PAPAI
           </span>
-          <span class="text-[8px] md:text-[9px] bg-red-600/80 border border-black/30 text-white px-1 py-px rounded-full font-brawl tracking-wider uppercase mx-auto inline-block truncate max-w-[85%]">
+          <span class="text-[8px] md:text-[9px] bg-red-600/90 border border-black/30 text-white px-2 py-px rounded-full font-brawl tracking-wider uppercase mx-auto inline-block truncate max-w-[90%]">
             👑 Dono do QG
           </span>
         </div>
       </div>
 
-      <!-- Card 2: MIGUEL -->
-      <div onclick="selectProfile('miguel')" class="group brawl-card bg-gradient-to-b from-blue-600 via-cyan-500 to-blue-800 p-0.5 md:p-1 text-center flex flex-col justify-between cursor-pointer h-full min-h-0 relative select-none">
-        <div class="p-1 md:p-3 flex items-center justify-center flex-grow min-h-0">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white/15 rounded-full mx-auto flex items-center justify-center border-2 md:border-4 border-white/10 group-hover:scale-105 transition-all shadow-inner overflow-hidden relative">
+      <!-- Card 2: MIGUEL (Azul) -->
+      <div onclick="selectProfile('miguel')" class="group brawl-lobby-btn brawl-card-blue p-0.5 md:p-1 text-center flex flex-col justify-between cursor-pointer relative select-none rounded-[20px]">
+        <div class="p-2 md:p-4 flex items-center justify-center flex-grow">
+          <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white/10 rounded-full mx-auto flex items-center justify-center border-2 md:border-4 border-white/20 group-hover:scale-105 group-hover:border-cyan-300 transition-all shadow-inner overflow-hidden relative">
             <img id="avatar-miguel" src="imagens/perfil/fang_portrait.png" alt="Miguel" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/100/3b82f6/ffffff?text=Miguel';">
             <span class="text-xl md:text-4xl absolute opacity-30 select-none pointer-events-none">🦈</span>
           </div>
         </div>
-        <div class="bg-black/45 p-1 md:p-2.5 border-t border-black/30 rounded-b-[16px] flex flex-col gap-0.5 flex-shrink-0 justify-center">
+        <div class="bg-black/45 p-1.5 md:p-2.5 border-t border-black/30 rounded-b-[16px] flex flex-col gap-0.5">
           <span class="font-brawl text-xs sm:text-sm md:text-lg tracking-wide uppercase text-white drop-shadow-[0_1.5px_0_#000] group-hover:text-yellow-300 truncate">
             MIGUEL
           </span>
-          <span class="text-[8px] md:text-[9px] bg-blue-600/80 border border-black/30 text-white px-1 py-px rounded-full font-brawl tracking-wider uppercase mx-auto inline-block truncate max-w-[85%]">
+          <span class="text-[8px] md:text-[9px] bg-blue-600/90 border border-black/30 text-white px-2 py-px rounded-full font-brawl tracking-wider uppercase mx-auto inline-block truncate max-w-[90%]">
             ⚡ Guerreiro Lenda
           </span>
         </div>
       </div>
 
-      <!-- Card 3: SOPHIA -->
-      <div onclick="selectProfile('sophia')" class="group brawl-card bg-gradient-to-b from-pink-600 via-fuchsia-400 to-purple-800 p-0.5 md:p-1 text-center flex flex-col justify-between cursor-pointer h-full min-h-0 relative select-none">
-        <div class="p-1 md:p-3 flex items-center justify-center flex-grow min-h-0">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white/15 rounded-full mx-auto flex items-center justify-center border-2 md:border-4 border-white/10 group-hover:scale-105 transition-all shadow-inner overflow-hidden relative">
+      <!-- Card 3: SOPHIA (Rosa) -->
+      <div onclick="selectProfile('sophia')" class="group brawl-lobby-btn brawl-card-pink p-0.5 md:p-1 text-center flex flex-col justify-between cursor-pointer relative select-none rounded-[20px]">
+        <div class="p-2 md:p-4 flex items-center justify-center flex-grow">
+          <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white/10 rounded-full mx-auto flex items-center justify-center border-2 md:border-4 border-white/20 group-hover:scale-105 group-hover:border-pink-300 transition-all shadow-inner overflow-hidden relative">
             <img id="avatar-sophia" src="imagens/perfil/penny_portrait.png" alt="Sophia" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/100/ec4899/ffffff?text=Sophia';">
             <span class="text-xl md:text-4xl absolute opacity-30 select-none pointer-events-none">🌸</span>
           </div>
         </div>
-        <div class="bg-black/45 p-1 md:p-2.5 border-t border-black/30 rounded-b-[16px] flex flex-col gap-0.5 flex-shrink-0 justify-center">
+        <div class="bg-black/45 p-1.5 md:p-2.5 border-t border-black/30 rounded-b-[16px] flex flex-col gap-0.5">
           <span class="font-brawl text-xs sm:text-sm md:text-lg tracking-wide uppercase text-white drop-shadow-[0_1.5px_0_#000] group-hover:text-yellow-300 truncate">
             SOPHIA
           </span>
-          <span class="text-[8px] md:text-[9px] bg-pink-600/80 border border-black/30 text-white px-1 py-px rounded-full font-brawl tracking-wider uppercase mx-auto inline-block truncate max-w-[85%]">
+          <span class="text-[8px] md:text-[9px] bg-pink-600/90 border border-black/30 text-white px-2 py-px rounded-full font-brawl tracking-wider uppercase mx-auto inline-block truncate max-w-[90%]">
             🦄 Princesa Uni
           </span>
         </div>
       </div>
 
-      <!-- Card 4: CONVIDADO -->
-      <div class="group brawl-card bg-gradient-to-b from-slate-600 via-emerald-400 to-slate-800 p-0.5 md:p-1 text-center flex flex-col justify-between h-full min-h-0 relative select-none" style="pointer-events: none; opacity: 0.7;">
-        <div class="p-1 md:p-3 flex items-center justify-center flex-grow min-h-0">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-white/15 rounded-full mx-auto flex items-center justify-center border-2 md:border-4 border-white/10 shadow-inner overflow-hidden relative">
-            <span class="text-xl md:text-4xl absolute opacity-30 select-none pointer-events-none">👾</span>
+      <!-- Card 4: CONVIDADO (Cinza/Bloqueado) -->
+      <div class="group brawl-card-gray p-0.5 md:p-1 text-center flex flex-col justify-between relative select-none rounded-[20px] opacity-65 pointer-events-none cursor-not-allowed">
+        <div class="p-2 md:p-4 flex items-center justify-center flex-grow">
+          <div class="w-14 h-14 sm:w-20 sm:h-20 bg-white/5 rounded-full mx-auto flex items-center justify-center border-2 md:border-4 border-white/10 shadow-inner overflow-hidden relative">
+            <span class="text-xl md:text-4xl absolute opacity-35 select-none pointer-events-none">👾</span>
           </div>
         </div>
-        <div class="bg-black/45 p-1 md:p-2.5 border-t border-black/30 rounded-b-[16px] flex flex-col gap-0.5 flex-shrink-0 justify-center">
-          <span class="font-brawl text-xs sm:text-sm md:text-lg tracking-wide uppercase text-white drop-shadow-[0_1.5px_0_#000] truncate">
+        <div class="bg-black/45 p-1.5 md:p-2.5 border-t border-black/30 rounded-b-[16px] flex flex-col gap-0.5">
+          <span class="font-brawl text-xs sm:text-sm md:text-lg tracking-wide uppercase text-slate-300 truncate">
             CONVIDADO
           </span>
-          <span class="text-[8px] md:text-[9px] bg-slate-600/80 border border-black/30 text-white px-1 py-px rounded-full font-brawl tracking-wider uppercase mx-auto inline-block truncate max-w-[85%]">
-            🎮 Aliado Rep
+          <span class="text-[8px] md:text-[9px] bg-slate-600/80 border border-black/30 text-white px-2 py-px rounded-full font-brawl tracking-wider uppercase mx-auto inline-block truncate max-w-[90%]">
+            🔒 BLOQUEADO
           </span>
         </div>
       </div>
@@ -194,7 +257,7 @@
       </p>
     </div>
 
-    <div class="max-w-2xl w-full mx-auto mb-12">
+    <div class="max-w-2xl w-full mx-auto mb-12 flex-shrink-0">
       <div class="w-full h-8 bg-black rounded-full border-4 border-black overflow-hidden relative p-1">
         <div id="loading-progress-bar" class="h-full rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-300 border-2 border-yellow-200 transition-all duration-100 flex items-center justify-end pr-2.5" style="width: 0%">
           <span class="text-[10px] font-brawl text-black pr-1 font-bold">START</span>
@@ -206,69 +269,10 @@
     </div>
   </div>
 
-  <!-- MONITOR DE STATUS NO PLACAR -->
-  <footer class="bg-slate-900 border-4 border-black rounded-2xl py-2 px-3 md:py-3 md:px-5 flex-shrink-0 shadow-[4px_4px_0_#000]">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5 mb-2">
-      
-      <div class="hidden md:flex items-center gap-2">
-        <div class="w-8 h-8 bg-yellow-400 border-2 border-black rounded flex items-center justify-center font-bold text-lg rotate-[-2deg] shadow-[1px_1px_0_#000]">
-          🏆
-        </div>
-        <div>
-          <h3 class="text-xs font-brawl text-yellow-400 uppercase drop-shadow-[0_1px_0_#000]">
-            Monitoramento
-          </h3>
-          <p class="text-[9px] text-slate-400 font-sansAlt">
-            Sincronizado com persistência local e chat!
-          </p>
-        </div>
-      </div>
-
-      <!-- Placar -->
-      <div class="grid grid-cols-4 gap-1.5 md:gap-3 w-full md:w-auto">
-        <div class="bg-slate-950 border border-black p-1 md:p-2 rounded-lg flex items-center justify-center gap-1.5 min-w-0">
-          <span class="text-sm md:text-lg">🔥</span>
-          <div class="text-left min-w-0 truncate">
-            <span class="font-brawl text-[8px] md:text-xs block text-yellow-400 uppercase truncate">Papai</span>
-            <span class="text-[7px] md:text-[9px] font-mono text-green-400 block truncate">● ATIVO</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-950 border border-black p-1 md:p-2 rounded-lg flex items-center justify-center gap-1.5 min-w-0">
-          <span class="text-sm md:text-lg">🦈</span>
-          <div class="text-left min-w-0 truncate">
-            <span class="font-brawl text-[8px] md:text-xs block text-blue-400 uppercase truncate">Miguel</span>
-            <span class="text-[7px] md:text-[9px] font-mono text-green-400 block truncate" id="status-mi">● ATIVO</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-950 border border-black p-1 md:p-2 rounded-lg flex items-center justify-center gap-1.5 min-w-0">
-          <span class="text-sm md:text-lg">🌸</span>
-          <div class="text-left min-w-0 truncate">
-            <span class="font-brawl text-[8px] md:text-xs block text-pink-400 uppercase truncate">Sophia</span>
-            <span class="text-[7px] md:text-[9px] font-mono text-green-400 block truncate" id="status-so">● ATIVO</span>
-          </div>
-        </div>
-
-        <div class="bg-slate-950 border border-black p-1 md:p-2 rounded-lg flex items-center justify-center gap-1.5 min-w-0 opacity-55">
-          <span class="text-sm md:text-lg">👾</span>
-          <div class="text-left min-w-0 truncate">
-            <span class="font-brawl text-[8px] md:text-xs block text-slate-400 uppercase truncate">Visita</span>
-            <span class="text-[7px] md:text-[9px] font-mono text-amber-500 block truncate">○ OFF</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Rodapé Logo Vertical e Versão -->
-    <div class="border-t border-slate-800/65 pt-2 flex items-center justify-between gap-2 flex-shrink-0">
-      <img src="imagens/ui/logo_vert.png" alt="QG do Papai" class="h-6 md:h-10 object-contain select-none pointer-events-none" onerror="this.onerror=null; this.src='https://placehold.co/100x30/1e052c/ffffff?text=QG+DO+PAPAI&font=Lilita+One';">
-      <div class="text-[8px] md:text-xs text-white/40 font-sansAlt font-semibold tracking-wider text-right">
-        ⚡ QG DO PAPAI • Brawl Stars Theme © 2026 • Versão: 3.0
-      </div>
-    </div>
-  </footer>
+  <!-- IMPORTAÇÃO DINÂMICA DO RODAPÉ MODULAR (rodape.html) -->
+  <div id="modular-footer-container" class="w-full max-w-4xl mx-auto z-10 flex-shrink-0 mt-4 pb-2">
+    <!-- Será populado dinamicamente com rodape.html via JavaScript (Modularidade Máxima) -->
+  </div>
 
   <!-- SISTEMA DE COMPORTAMENTO EM JAVASCRIPT -->
   <script>
@@ -405,8 +409,136 @@
       });
     }
 
+    // Gerencia o Placar de Status Online Dinamicamente (Display none se vazio)
+    function updateOnlineAgentsUI() {
+      const container = document.getElementById('status-online-container');
+      
+      // Simulação ativa com base em quem está cadastrado/ativo
+      const activeAgents = [
+        { name: 'Papai', role: '👑 ADMIN', avatar: 'imagens/perfil/bull_portrait.png', icon: '🔥', color: 'text-yellow-400' },
+        { name: 'Miguel', role: '⚡ JOGADOR', avatar: 'imagens/perfil/fang_portrait.png', icon: '🦈', color: 'text-blue-400' },
+        { name: 'Sophia', role: '✨ REALEZA', avatar: 'imagens/perfil/penny_portrait.png', icon: '🌸', color: 'text-pink-400' }
+      ];
+      
+      if (activeAgents.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+      
+      container.style.display = 'flex';
+      container.innerHTML = `
+        <div class="flex items-center gap-1.5 mr-2">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+          </span>
+          <span class="font-brawl text-[10px] md:text-xs text-green-400 uppercase tracking-wider">Lobby Online:</span>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          ${activeAgents.map(agent => `
+            <div class="flex items-center gap-1 bg-slate-900/90 border border-slate-700/60 px-2 md:px-3 py-0.5 rounded-full shadow-inner">
+              <span class="text-[10px] md:text-xs">${agent.icon}</span>
+              <span class="font-brawl text-[9px] md:text-xs ${agent.color}">${agent.name}</span>
+              <span class="text-[7px] md:text-[8px] px-1 bg-green-600/20 text-green-400 rounded border border-green-500/20 font-mono">${agent.role}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Carrega o footer modular dinamicamente via Fetch
+    async function loadModularFooter() {
+      try {
+        const response = await fetch('rodape.html?v=4.0');
+        if (response.ok) {
+          const html = await response.text();
+          document.getElementById('modular-footer-container').innerHTML = html;
+        } else {
+          console.error('Falha ao carregar rodape.html:', response.status);
+          // Fallback visual caso ocorra algum erro temporário de fetch local
+          document.getElementById('modular-footer-container').innerHTML = `
+            <div class="brawl-emotional-footer-card text-center">
+              <span class="font-brawl text-[#FFE800]">⚡ QG DO PAPAI • Brawl Stars Theme © 2026 • Versão: 4.0</span>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error('Erro ao carregar rodapé modular:', err);
+      }
+    }
+
+    // Sistema de Partículas e Brilhos de fundo estilo Menu Brawl Stars
+    function initParticles() {
+      const canvas = document.getElementById('particles-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+      
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+      
+      const particles = [];
+      const particleCount = 20;
+      
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height + height, // começam abaixo ou espalhados
+          size: Math.random() * 4 + 2,
+          speedY: -(Math.random() * 0.8 + 0.3),
+          speedX: (Math.random() - 0.5) * 0.3,
+          alpha: Math.random() * 0.5 + 0.1,
+          pulse: Math.random() * 0.02 + 0.01
+        });
+      }
+      
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+        
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          
+          // Estilo de brilho dourado sutil do Brawl Stars
+          ctx.fillStyle = `rgba(254, 240, 138, ${p.alpha})`;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#f59e0b';
+          ctx.fill();
+          
+          // Movimento sutil para cima e para os lados
+          p.y += p.speedY;
+          p.x += p.speedX;
+          
+          // Oscilação do brilho
+          p.alpha += p.pulse;
+          if (p.alpha > 0.6 || p.alpha < 0.1) {
+            p.pulse = -p.pulse;
+          }
+          
+          // Reseta a partícula quando sai do topo
+          if (p.y < -10) {
+            p.y = height + 10;
+            p.x = Math.random() * width;
+          }
+        });
+        
+        requestAnimationFrame(animate);
+      }
+      
+      animate();
+    }
+
     // Registra na carga do DOM
-    window.addEventListener('DOMContentLoaded', loadDynamicAvatars);
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDynamicAvatars();
+      updateOnlineAgentsUI();
+      loadModularFooter();
+      initParticles();
+    });
   </script>
 
 </body>
